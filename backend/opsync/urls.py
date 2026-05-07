@@ -1,6 +1,4 @@
-"""
-URL configuration for reactdjango project.
-"""
+"""URL configuration for opsync project."""
 
 from django.contrib import admin
 from django.urls import path, include

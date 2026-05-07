@@ -39,11 +39,11 @@ export default function Dashboard() {
 
         <Card>
           <CardHeader>
-            <CardDescription>Get started</CardDescription>
-            <CardTitle>Build your app</CardTitle>
+            <CardDescription>OpsSync roadmap</CardDescription>
+            <CardTitle>Modules coming online</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            BdREN OpsSync modules can be added here as the internal workflows come online.
+            BdREN OpsSync modules will appear here as internal workflows come online.
           </CardContent>
         </Card>
       </div>

@@ -153,7 +153,7 @@ const Login = () => {
                         <div className="min-w-0 flex-1">
                           <p className="font-semibold">Need help signing in?</p>
                           <p className="mt-1 opacity-80">
-                            If the account is eligible, reactdjango can resend a verification email or you can request a password reset without confirming whether the account exists.
+                            If the account is eligible, BdREN OpsSync can resend a verification email or you can request a password reset without confirming whether the account exists.
                           </p>
                           <div className="mt-3 flex flex-wrap gap-3">
                             <Button

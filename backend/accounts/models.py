@@ -100,6 +100,7 @@ class SiteSettings(models.Model):
     social_login_google_enabled = models.BooleanField(default=False)
     social_login_facebook_enabled = models.BooleanField(default=False)
     social_login_github_enabled = models.BooleanField(default=False)
+    social_login_bdren_enabled = models.BooleanField(default=False)
     ai_provider = models.CharField(
         max_length=20,
         choices=AIProvider.choices,
@@ -125,6 +126,7 @@ class UserSocialAccount(models.Model):
         GOOGLE = "google", "Google"
         FACEBOOK = "facebook", "Facebook"
         GITHUB = "github", "GitHub"
+        BDREN = "bdren", "BdREN"
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(

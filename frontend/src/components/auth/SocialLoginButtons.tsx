@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { AlertCircle, LoaderCircle } from 'lucide-react'
+import { AlertCircle, Building2, LoaderCircle } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { getSocialProviders, startSocialLogin } from '@/services/auth'
@@ -33,10 +33,15 @@ function GitHubIcon(props: React.SVGProps<SVGSVGElement>) {
   )
 }
 
+function BdrenIcon(props: React.SVGProps<SVGSVGElement>) {
+  return <Building2 aria-hidden="true" {...props} />
+}
+
 const PROVIDER_ICONS: Record<string, (props: React.SVGProps<SVGSVGElement>) => React.ReactElement> = {
   google: GoogleIcon,
   facebook: FacebookIcon,
   github: GitHubIcon,
+  bdren: BdrenIcon,
 }
 
 interface SocialProvider {
@@ -118,7 +123,7 @@ export default function SocialLoginButtons({ nextPath = '/dashboard' }: { nextPa
         </div>
       ) : null}
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         {providers.map((provider) => {
           const Icon = PROVIDER_ICONS[provider.id]
           const isPending = pendingProvider === provider.id

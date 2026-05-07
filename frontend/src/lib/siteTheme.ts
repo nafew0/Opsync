@@ -21,14 +21,15 @@ const DEFAULT_SITE_COLORS: ThemeColors = {
   accent: '#5b2d62',
 }
 
-export const SITE_THEME_STORAGE_KEY = 'reactdjango-site-theme'
+export const SITE_THEME_STORAGE_KEY = 'opsync-site-theme'
+export const LEGACY_SITE_THEME_STORAGE_KEY = 'reactdjango-site-theme'
 
 export const DEFAULT_SITE_THEME_ID = 'quest-default'
 
 export const SITE_THEME_PRESETS = [
   {
     id: 'quest-default',
-    name: 'reactdjango Core',
+    name: 'BdREN OpsSync Core',
     description: 'Apricot and orchid with a deep plum accent.',
     colors: DEFAULT_SITE_COLORS,
   },

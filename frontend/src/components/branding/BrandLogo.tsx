@@ -15,7 +15,7 @@ export default function BrandLogo({ className, imageClassName, compact = false }
     <div className={cn('flex items-center', className)}>
       <img
         src={logoUrl}
-        alt="reactdjango logo"
+        alt="BdREN OpsSync logo"
         loading="eager"
         decoding="async"
         className={cn(

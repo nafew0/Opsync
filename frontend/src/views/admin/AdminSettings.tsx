@@ -21,6 +21,7 @@ type SocialKey =
   | 'social_login_google_enabled'
   | 'social_login_facebook_enabled'
   | 'social_login_github_enabled'
+  | 'social_login_bdren_enabled'
 type BrandingField =
   | 'branding_logo'
   | 'branding_favicon'
@@ -48,6 +49,7 @@ interface FormState {
   social_login_google_enabled: boolean
   social_login_facebook_enabled: boolean
   social_login_github_enabled: boolean
+  social_login_bdren_enabled: boolean
   ai_provider: string
   ai_model_openai: string
   ai_model_anthropic: string
@@ -168,6 +170,7 @@ function buildInitialState(settings: Record<string, unknown> | null | undefined)
     social_login_google_enabled: Boolean(settings?.social_login_google_enabled ?? false),
     social_login_facebook_enabled: Boolean(settings?.social_login_facebook_enabled ?? false),
     social_login_github_enabled: Boolean(settings?.social_login_github_enabled ?? false),
+    social_login_bdren_enabled: Boolean(settings?.social_login_bdren_enabled ?? false),
     ai_provider: String(settings?.ai_provider || 'openai'),
     ai_model_openai: String(settings?.ai_model_openai || ''),
     ai_model_anthropic: String(settings?.ai_model_anthropic || ''),
@@ -309,7 +312,7 @@ export default function AdminSettings() {
       await queryClient.invalidateQueries({ queryKey: ['public-branding'] })
       toast({
         title: 'Settings saved',
-        description: 'reactdjango updated the platform settings successfully.',
+        description: 'BdREN OpsSync updated the platform settings successfully.',
         variant: 'success',
       })
     } catch (requestError) {
@@ -317,7 +320,7 @@ export default function AdminSettings() {
         title: 'Save failed',
         description: extractErrorMessage(
           requestError,
-          'reactdjango could not save settings right now.'
+          'BdREN OpsSync could not save settings right now.'
         ),
         variant: 'error',
       })
@@ -347,7 +350,7 @@ export default function AdminSettings() {
         title: 'Connection failed',
         description: extractErrorMessage(
           requestError,
-          'reactdjango could not validate the AI provider.'
+          'BdREN OpsSync could not validate the AI provider.'
         ),
         variant: 'error',
       })
@@ -367,7 +370,7 @@ export default function AdminSettings() {
   if (error) {
     return (
       <div className="theme-panel rounded-[1.8rem] p-6 text-sm text-rose-600">
-        reactdjango could not load settings right now.
+        BdREN OpsSync could not load settings right now.
       </div>
     )
   }
@@ -649,6 +652,14 @@ export default function AdminSettings() {
                   : 'Add GitHub client credentials to the backend environment before enabling this provider.',
                 configured: Boolean(data.social_login_github_meta?.configured),
               },
+              {
+                key: 'social_login_bdren_enabled' as SocialKey,
+                title: 'BdREN Accounts login',
+                description: data.social_login_bdren_meta?.configured
+                  ? 'Allow users to sign in or sign up with BdREN Accounts.'
+                  : 'Add BdREN OAuth credentials to the backend environment before enabling this provider.',
+                configured: Boolean(data.social_login_bdren_meta?.configured),
+              },
             ] as Array<{
               key: SocialKey
               title: string
@@ -738,7 +749,7 @@ export default function AdminSettings() {
               </div>
               <p className="mt-2 text-sm text-muted-foreground">
                 {data.ai_api_key_openai_meta.configured
-                  ? 'Configured in the server environment. reactdjango does not expose provider secrets in the admin panel.'
+                  ? 'Configured in the server environment. BdREN OpsSync does not expose provider secrets in the admin panel.'
                   : 'Configure `OPENAI_API_KEY` on the server to enable OpenAI requests and connection testing.'}
               </p>
             </div>
@@ -754,7 +765,7 @@ export default function AdminSettings() {
               </div>
               <p className="mt-2 text-sm text-muted-foreground">
                 {data.ai_api_key_anthropic_meta.configured
-                  ? 'Configured in the server environment. reactdjango does not expose provider secrets in the admin panel.'
+                  ? 'Configured in the server environment. BdREN OpsSync does not expose provider secrets in the admin panel.'
                   : 'Configure `ANTHROPIC_API_KEY` on the server to enable Anthropic requests and connection testing.'}
               </p>
             </div>

@@ -24,15 +24,18 @@ SOCIAL_PROVIDER_LABELS = {
     UserSocialAccount.Provider.GOOGLE: "Google",
     UserSocialAccount.Provider.FACEBOOK: "Facebook",
     UserSocialAccount.Provider.GITHUB: "GitHub",
+    UserSocialAccount.Provider.BDREN: "BdREN Accounts",
 }
 SOCIAL_PROVIDER_SETTINGS_FIELDS = {
     UserSocialAccount.Provider.GOOGLE: "social_login_google_enabled",
     UserSocialAccount.Provider.FACEBOOK: "social_login_facebook_enabled",
     UserSocialAccount.Provider.GITHUB: "social_login_github_enabled",
+    UserSocialAccount.Provider.BDREN: "social_login_bdren_enabled",
 }
 SOCIAL_TRUSTED_EMAIL_PROVIDERS = {
     UserSocialAccount.Provider.GOOGLE,
     UserSocialAccount.Provider.GITHUB,
+    UserSocialAccount.Provider.BDREN,
 }
 USERNAME_ALLOWED_PATTERN = re.compile(r"[^A-Za-z0-9@.+_-]+")
 
@@ -211,6 +214,12 @@ def get_provider_credentials(provider):
                 settings, "GITHUB_OAUTH_CLIENT_SECRET", ""
             ).strip(),
         },
+        UserSocialAccount.Provider.BDREN: {
+            "client_id": getattr(settings, "BDREN_OAUTH_CLIENT_ID", "").strip(),
+            "client_secret": getattr(
+                settings, "BDREN_OAUTH_CLIENT_SECRET", ""
+            ).strip(),
+        },
     }
     return credential_mapping[normalized]
 
@@ -224,6 +233,15 @@ def ensure_provider_available(provider, site_settings_obj=None):
             f"{status.name} login is not configured on the server."
         )
     return status
+
+
+def get_bdren_oauth_base_url():
+    return (
+        getattr(settings, "BDREN_OAUTH_BASE_URL", "https://accounts.bdren.net.bd")
+        .strip()
+        .rstrip("/")
+        or "https://accounts.bdren.net.bd"
+    )
 
 
 def get_oauth_client(provider):
@@ -262,6 +280,21 @@ def get_oauth_client(provider):
             authorize_url=f"https://www.facebook.com/{version}/dialog/oauth",
             client_kwargs={"scope": "email public_profile"},
         )
+    elif normalized == UserSocialAccount.Provider.BDREN:
+        base_url = get_bdren_oauth_base_url()
+        scope = getattr(settings, "BDREN_OAUTH_SCOPE", "").strip()
+        client_kwargs = {"token_endpoint_auth_method": "client_secret_basic"}
+        if scope:
+            client_kwargs["scope"] = scope
+        oauth.register(
+            name=normalized,
+            client_id=credentials["client_id"],
+            client_secret=credentials["client_secret"],
+            api_base_url=f"{base_url}/",
+            access_token_url=f"{base_url}/oauth/token/",
+            authorize_url=f"{base_url}/oauth/authorize/",
+            client_kwargs=client_kwargs,
+        )
     return oauth.create_client(normalized)
 
 
@@ -277,6 +310,8 @@ def build_social_authorization(request, provider, next_path):
     authorize_kwargs = {}
     if normalized == UserSocialAccount.Provider.GOOGLE:
         authorize_kwargs["prompt"] = "select_account"
+    elif normalized == UserSocialAccount.Provider.BDREN:
+        authorize_kwargs["response_type"] = "code"
 
     authorization = client.create_authorization_url(redirect_uri, **authorize_kwargs)
     client.save_authorize_data(
@@ -342,6 +377,8 @@ def fetch_social_identity(provider, client, token):
         return fetch_github_identity(client, token)
     if normalized == UserSocialAccount.Provider.FACEBOOK:
         return fetch_facebook_identity(client, token)
+    if normalized == UserSocialAccount.Provider.BDREN:
+        return fetch_bdren_identity(client, token)
     raise SocialProviderUnsupported("Unsupported social login provider.")
 
 
@@ -441,6 +478,90 @@ def fetch_facebook_identity(client, token):
         last_name=(profile.get("last_name") or "").strip(),
         avatar_url=(picture_data.get("url") or "").strip(),
     )
+
+
+def fetch_bdren_identity(client, token):
+    response = client.post(
+        "oauth/profile/",
+        token=token,
+        headers={"Accept": "application/json"},
+    )
+    response.raise_for_status()
+    profile = response.json()
+    profile_data = select_bdren_profile_payload(profile)
+
+    provider_user_id = get_first_string_value(
+        profile_data,
+        ("id", "sub", "uid", "user_id", "uuid", "provider_user_id"),
+    )
+    email = get_first_string_value(
+        profile_data,
+        ("email", "mail", "user_email", "email_address"),
+    ).lower()
+    if not provider_user_id or not email:
+        raise SocialAuthEmailError(
+            "BdREN Accounts did not return both an account identifier and email address."
+        )
+
+    first_name = get_first_string_value(profile_data, ("first_name", "given_name"))
+    last_name = get_first_string_value(
+        profile_data,
+        ("last_name", "family_name", "surname", "sn"),
+    )
+    display_name = (
+        get_first_string_value(
+            profile_data,
+            ("name", "display_name", "full_name", "cn"),
+        )
+        or " ".join(part for part in (first_name, last_name) if part)
+        or email
+    )
+
+    return SocialIdentity(
+        provider=UserSocialAccount.Provider.BDREN,
+        provider_user_id=provider_user_id,
+        email=email,
+        email_verified=True,
+        display_name=display_name,
+        first_name=first_name,
+        last_name=last_name,
+        avatar_url=get_first_string_value(
+            profile_data,
+            ("avatar_url", "picture", "photo", "profile_picture"),
+        ),
+    )
+
+
+def select_bdren_profile_payload(profile):
+    if not isinstance(profile, dict):
+        raise SocialAuthException(
+            "BdREN Accounts returned an invalid profile response.",
+            code="provider_profile_invalid",
+        )
+
+    for key in ("profile", "user", "data"):
+        value = profile.get(key)
+        if isinstance(value, dict):
+            merged = {**profile, **value}
+            return merged
+    return profile
+
+
+def get_first_string_value(payload, keys):
+    for key in keys:
+        value = payload.get(key)
+        if value is None:
+            continue
+        if isinstance(value, bool):
+            continue
+        if isinstance(value, str) and not value.strip():
+            continue
+        if isinstance(value, (dict, list, tuple, set)):
+            continue
+        normalized = str(value).strip()
+        if normalized:
+            return normalized
+    return ""
 
 
 def select_verified_github_email(emails):

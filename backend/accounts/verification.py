@@ -42,6 +42,7 @@ def get_default_site_settings_values():
         "social_login_google_enabled": False,
         "social_login_facebook_enabled": False,
         "social_login_github_enabled": False,
+        "social_login_bdren_enabled": False,
         "ai_provider": SiteSettings.AIProvider.OPENAI,
         "ai_model_openai": "",
         "ai_model_anthropic": "",
@@ -90,6 +91,7 @@ def _load_site_settings_with_schema_fallback():
             "social_login_google_enabled",
             "social_login_facebook_enabled",
             "social_login_github_enabled",
+            "social_login_bdren_enabled",
             "ai_provider",
             "ai_model_openai",
             "ai_model_anthropic",
@@ -207,7 +209,7 @@ def deliver_verification_email(user, verification_token):
     plain_message = strip_tags(html_message)
 
     send_mail(
-        subject="Verify your reactdjango email",
+        subject="Verify your BdREN OpsSync email",
         message=plain_message,
         from_email=getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@example.com"),
         recipient_list=[user.email],

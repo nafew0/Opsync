@@ -71,6 +71,7 @@ class SiteSettingsAdminSerializer(serializers.ModelSerializer):
     social_login_google_meta = serializers.SerializerMethodField()
     social_login_facebook_meta = serializers.SerializerMethodField()
     social_login_github_meta = serializers.SerializerMethodField()
+    social_login_bdren_meta = serializers.SerializerMethodField()
     rate_limit_storage_meta = serializers.SerializerMethodField()
     branding_logo_url = serializers.SerializerMethodField()
     branding_favicon_url = serializers.SerializerMethodField()
@@ -104,6 +105,7 @@ class SiteSettingsAdminSerializer(serializers.ModelSerializer):
             "social_login_google_enabled",
             "social_login_facebook_enabled",
             "social_login_github_enabled",
+            "social_login_bdren_enabled",
             "ai_provider",
             "ai_model_openai",
             "ai_model_anthropic",
@@ -113,6 +115,7 @@ class SiteSettingsAdminSerializer(serializers.ModelSerializer):
             "social_login_google_meta",
             "social_login_facebook_meta",
             "social_login_github_meta",
+            "social_login_bdren_meta",
             "rate_limit_storage_meta",
         ]
 
@@ -143,6 +146,10 @@ class SiteSettingsAdminSerializer(serializers.ModelSerializer):
 
     def get_social_login_github_meta(self, obj):
         status = get_social_provider_status("github", obj)
+        return {"configured": status.configured, "source": status.source}
+
+    def get_social_login_bdren_meta(self, obj):
+        status = get_social_provider_status("bdren", obj)
         return {"configured": status.configured, "source": status.source}
 
     def get_branding_logo_url(self, obj):
@@ -221,6 +228,7 @@ class SiteSettingsUpdateSerializer(serializers.Serializer):
     social_login_google_enabled = serializers.BooleanField(required=False)
     social_login_facebook_enabled = serializers.BooleanField(required=False)
     social_login_github_enabled = serializers.BooleanField(required=False)
+    social_login_bdren_enabled = serializers.BooleanField(required=False)
     ai_provider = serializers.ChoiceField(
         choices=SiteSettings.AIProvider.choices,
         required=False,

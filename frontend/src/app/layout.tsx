@@ -4,8 +4,9 @@ import Providers from './providers'
 import ClientShell from './ClientShell'
 
 export const metadata: Metadata = {
-  title: 'reactdjango',
-  description: 'A Django + React boilerplate',
+  title: 'BdREN OpsSync',
+  applicationName: 'BdREN OpsSync',
+  description: 'BdREN OpsSync operations workspace.',
   icons: {
     icon: '/branding/logo.ico',
     shortcut: '/branding/logo.ico',

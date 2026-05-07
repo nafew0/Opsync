@@ -432,7 +432,7 @@ export default function Home() {
           <div>
             <BrandLogo compact imageClassName="h-[1.3rem] w-[7rem] sm:h-[1.45rem] sm:w-[7.8rem]" />
             <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-              {'reactdjango'} • your tagline here
+              BdREN OpsSync • Operations coordination for BdREN teams
             </p>
           </div>
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">

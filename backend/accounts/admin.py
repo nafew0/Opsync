@@ -12,6 +12,10 @@ from .user_deletion import delete_user_account
 
 User = get_user_model()
 
+admin.site.site_header = "BdREN OpsSync administration"
+admin.site.site_title = "BdREN OpsSync admin"
+admin.site.index_title = "BdREN OpsSync administration"
+
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
@@ -135,6 +139,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
         "social_login_google_enabled",
         "social_login_facebook_enabled",
         "social_login_github_enabled",
+        "social_login_bdren_enabled",
         "ai_provider",
         "updated_at",
     ]
@@ -162,6 +167,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
                     "social_login_google_enabled",
                     "social_login_facebook_enabled",
                     "social_login_github_enabled",
+                    "social_login_bdren_enabled",
                 )
             },
         ),

@@ -14,6 +14,7 @@ const PROVIDER_LABELS: Record<string, string> = {
   google: 'Google',
   facebook: 'Facebook',
   github: 'GitHub',
+  bdren: 'BdREN Accounts',
 }
 
 export default function SocialAuthCallback() {

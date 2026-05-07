@@ -4,6 +4,7 @@ import tempfile
 from io import BytesIO
 from datetime import timedelta
 from unittest.mock import patch
+from urllib.parse import parse_qs, urlparse
 
 from django.contrib import admin
 from django.core import mail
@@ -26,11 +27,13 @@ from .social_auth import (
     SocialAuthEmailError,
     SocialIdentity,
     SocialLoginResult,
+    fetch_bdren_identity,
     fetch_github_identity,
+    get_oauth_client,
     resolve_social_login,
 )
 from .signup_protection import build_registration_token, get_signup_captcha_cache_key
-from .token_cookies import get_refresh_cookie_name
+from .token_cookies import LEGACY_REFRESH_COOKIE_NAME, get_refresh_cookie_name
 from .user_deletion import delete_user_account
 
 
@@ -60,13 +63,27 @@ class StubGitHubClient:
         raise AssertionError(f"Unexpected GitHub path: {path}")
 
 
+class StubBdrenClient:
+    def __init__(self, profile):
+        self.profile = profile
+        self.requests = []
+
+    def post(self, path, **kwargs):
+        self.requests.append((path, kwargs))
+        return StubResponse(self.profile)
+
+
 class StubSessionFramework:
+    def __init__(self, provider="google"):
+        self.provider = provider
+
     def set_state_data(self, session, state, data):
-        session[f"_state_google_{state}"] = {"data": data}
+        session[f"_state_{self.provider}_{state}"] = {"data": data}
 
 
 class StubOAuthClient:
-    framework = StubSessionFramework()
+    def __init__(self, provider="google"):
+        self.framework = StubSessionFramework(provider)
 
     def create_authorization_url(self, redirect_uri, **kwargs):
         return {
@@ -108,6 +125,7 @@ class AccountsBaseTestCase(TestCase):
         self.site_settings.social_login_google_enabled = False
         self.site_settings.social_login_facebook_enabled = False
         self.site_settings.social_login_github_enabled = False
+        self.site_settings.social_login_bdren_enabled = False
         self.site_settings.save()
 
     def get_signup_challenge(self, *, client=None, **extra_headers):
@@ -581,6 +599,21 @@ class TokenRefreshSecurityTests(AccountsBaseTestCase):
         self.assertIn("access", response.data)
         self.assertIn(get_refresh_cookie_name(), response.cookies)
 
+    def test_cookie_refresh_accepts_legacy_cookie_name(self):
+        refresh = RefreshToken.for_user(self.user)
+        self.client.cookies[LEGACY_REFRESH_COOKIE_NAME] = str(refresh)
+
+        response = self.client.post(
+            "/api/auth/token/refresh/",
+            {},
+            format="json",
+            HTTP_ORIGIN="http://testserver",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("access", response.data)
+        self.assertIn(get_refresh_cookie_name(), response.cookies)
+
 
 @override_settings(DB_ENGINE="django.db.backends.sqlite3")
 class ProfileUpdateSecurityTests(AccountsBaseTestCase):
@@ -615,15 +648,20 @@ class ProfileUpdateSecurityTests(AccountsBaseTestCase):
     SOCIAL_AUTH_ALLOWED_FRONTEND_ORIGINS=["http://localhost:5555"],
     GOOGLE_OAUTH_CLIENT_ID="google-id",
     GOOGLE_OAUTH_CLIENT_SECRET="google-secret",
+    BDREN_OAUTH_CLIENT_ID="bdren-id",
+    BDREN_OAUTH_CLIENT_SECRET="bdren-secret",
+    BDREN_OAUTH_BASE_URL="https://accounts.bdren.net.bd",
 )
 class SocialProviderEndpointTests(AccountsBaseTestCase):
     def test_social_provider_list_reflects_admin_flags_and_env_configuration(self):
         self.site_settings.social_login_google_enabled = True
         self.site_settings.social_login_facebook_enabled = True
+        self.site_settings.social_login_bdren_enabled = True
         self.site_settings.save(
             update_fields=[
                 "social_login_google_enabled",
                 "social_login_facebook_enabled",
+                "social_login_bdren_enabled",
             ]
         )
 
@@ -637,6 +675,9 @@ class SocialProviderEndpointTests(AccountsBaseTestCase):
         self.assertFalse(providers["facebook"]["configured"])
         self.assertTrue(providers["facebook"]["enabled"])
         self.assertFalse(providers["facebook"]["available"])
+        self.assertTrue(providers["bdren"]["configured"])
+        self.assertTrue(providers["bdren"]["enabled"])
+        self.assertTrue(providers["bdren"]["available"])
 
     def test_social_start_rejects_invalid_origin(self):
         self.site_settings.social_login_google_enabled = True
@@ -689,12 +730,80 @@ class SocialProviderEndpointTests(AccountsBaseTestCase):
         self.assertIn("_state_google_state-123", session)
         mocked_client.assert_called_once_with("google")
 
+    @patch(
+        "accounts.social_auth.get_oauth_client",
+        return_value=StubOAuthClient(provider="bdren"),
+    )
+    def test_bdren_social_start_returns_authorization_url_for_enabled_provider(
+        self, mocked_client
+    ):
+        self.site_settings.social_login_bdren_enabled = True
+        self.site_settings.save(update_fields=["social_login_bdren_enabled"])
+
+        response = self.client.post(
+            "/api/auth/social/bdren/start/",
+            {"next": "/dashboard"},
+            format="json",
+            HTTP_ORIGIN="http://localhost:5555",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["provider"], "bdren")
+        self.assertEqual(
+            response.data["authorization_url"],
+            "https://provider.example/oauth/authorize",
+        )
+        session = self.client.session
+        self.assertIn("_state_bdren_state-123", session)
+        mocked_client.assert_called_once_with("bdren")
+
+    def test_bdren_social_start_uses_configured_authorize_endpoint(self):
+        self.site_settings.social_login_bdren_enabled = True
+        self.site_settings.save(update_fields=["social_login_bdren_enabled"])
+
+        response = self.client.post(
+            "/api/auth/social/bdren/start/",
+            {"next": "/dashboard"},
+            format="json",
+            HTTP_ORIGIN="http://localhost:5555",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        parsed_url = urlparse(response.data["authorization_url"])
+        params = parse_qs(parsed_url.query)
+        self.assertEqual(
+            f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}",
+            "https://accounts.bdren.net.bd/oauth/authorize/",
+        )
+        self.assertEqual(params["client_id"], ["bdren-id"])
+        self.assertEqual(params["response_type"], ["code"])
+        self.assertIn("state", params)
+
+    def test_bdren_oauth_client_uses_basic_auth_for_token_exchange(self):
+        client = get_oauth_client("bdren")
+
+        self.assertEqual(
+            client.authorize_url,
+            "https://accounts.bdren.net.bd/oauth/authorize/",
+        )
+        self.assertEqual(
+            client.access_token_url,
+            "https://accounts.bdren.net.bd/oauth/token/",
+        )
+        self.assertEqual(
+            client.client_kwargs["token_endpoint_auth_method"],
+            "client_secret_basic",
+        )
+
 
 @override_settings(
     DB_ENGINE="django.db.backends.sqlite3",
     GOOGLE_OAUTH_CLIENT_ID="google-id",
     GOOGLE_OAUTH_CLIENT_SECRET="google-secret",
-    MEDIA_ROOT=tempfile.mkdtemp(prefix="reactdjango-branding-tests-"),
+    BDREN_OAUTH_CLIENT_ID="bdren-id",
+    BDREN_OAUTH_CLIENT_SECRET="bdren-secret",
+    BDREN_OAUTH_BASE_URL="https://accounts.bdren.net.bd",
+    MEDIA_ROOT=tempfile.mkdtemp(prefix="opsync-branding-tests-"),
 )
 class AdminSettingsSocialTests(AccountsBaseTestCase):
     def setUp(self):
@@ -708,12 +817,19 @@ class AdminSettingsSocialTests(AccountsBaseTestCase):
 
     def test_admin_settings_returns_social_toggle_meta(self):
         self.site_settings.social_login_google_enabled = True
-        self.site_settings.save(update_fields=["social_login_google_enabled"])
+        self.site_settings.social_login_bdren_enabled = True
+        self.site_settings.save(
+            update_fields=[
+                "social_login_google_enabled",
+                "social_login_bdren_enabled",
+            ]
+        )
 
         response = self.client.get("/api/admin/settings/")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(response.data["social_login_google_enabled"])
+        self.assertTrue(response.data["social_login_bdren_enabled"])
         self.assertFalse(response.data["require_email_verification"])
         self.assertFalse(response.data["signup_captcha_enabled"])
         self.assertFalse(response.data["signup_disposable_email_blocking_enabled"])
@@ -723,6 +839,11 @@ class AdminSettingsSocialTests(AccountsBaseTestCase):
         self.assertTrue(response.data["social_login_google_meta"]["configured"])
         self.assertEqual(
             response.data["social_login_google_meta"]["source"],
+            "environment",
+        )
+        self.assertTrue(response.data["social_login_bdren_meta"]["configured"])
+        self.assertEqual(
+            response.data["social_login_bdren_meta"]["source"],
             "environment",
         )
         self.assertIn("rate_limit_storage_meta", response.data)
@@ -742,6 +863,7 @@ class AdminSettingsSocialTests(AccountsBaseTestCase):
                 "signup_sustained_limit": 30,
                 "social_login_google_enabled": True,
                 "social_login_github_enabled": True,
+                "social_login_bdren_enabled": True,
             },
             format="json",
         )
@@ -756,6 +878,7 @@ class AdminSettingsSocialTests(AccountsBaseTestCase):
         self.assertEqual(self.site_settings.signup_sustained_limit, 30)
         self.assertTrue(self.site_settings.social_login_google_enabled)
         self.assertTrue(self.site_settings.social_login_github_enabled)
+        self.assertTrue(self.site_settings.social_login_bdren_enabled)
 
     def test_public_branding_returns_custom_uploaded_assets(self):
         response = self.client.patch(
@@ -923,6 +1046,56 @@ class SocialAuthServiceTests(AccountsBaseTestCase):
                 provider_user_id="google-456",
             ).exists()
         )
+
+    def test_bdren_profile_normalization_accepts_email_and_stable_id(self):
+        client = StubBdrenClient(
+            {
+                "data": {
+                    "uid": "bdren-123",
+                    "mail": "Bdren.User@example.edu.bd",
+                    "display_name": "BdREN User",
+                    "given_name": "BdREN",
+                    "family_name": "User",
+                }
+            }
+        )
+
+        identity = fetch_bdren_identity(client, token={"access_token": "token"})
+
+        self.assertEqual(identity.provider, "bdren")
+        self.assertEqual(identity.provider_user_id, "bdren-123")
+        self.assertEqual(identity.email, "bdren.user@example.edu.bd")
+        self.assertTrue(identity.email_verified)
+        self.assertEqual(identity.display_name, "BdREN User")
+        self.assertEqual(identity.first_name, "BdREN")
+        self.assertEqual(identity.last_name, "User")
+        self.assertEqual(client.requests[0][0], "oauth/profile/")
+        self.assertEqual(client.requests[0][1]["token"], {"access_token": "token"})
+
+    def test_bdren_identity_creates_verified_user_and_social_link(self):
+        identity = SocialIdentity(
+            provider="bdren",
+            provider_user_id="bdren-456",
+            email="bdren@example.edu.bd",
+            email_verified=True,
+            display_name="BdREN User",
+            first_name="BdREN",
+            last_name="User",
+        )
+
+        result = resolve_social_login(
+            identity,
+            frontend_origin="http://localhost:5555",
+            next_path="/dashboard",
+        )
+
+        self.assertEqual(result.status, "success")
+        user = User.objects.get(email="bdren@example.edu.bd")
+        self.assertTrue(user.email_verified)
+        social_account = UserSocialAccount.objects.get(user=user, provider="bdren")
+        self.assertTrue(social_account.is_active)
+        self.assertTrue(social_account.email_verified)
+        self.assertEqual(social_account.provider_user_id, "bdren-456")
 
     def test_github_identity_requires_verified_email(self):
         client = StubGitHubClient(

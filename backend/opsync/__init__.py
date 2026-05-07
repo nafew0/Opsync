@@ -1,1 +1,1 @@
-# reactdjango package
+# opsync package

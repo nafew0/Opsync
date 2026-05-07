@@ -48,7 +48,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                  reactdjango
+                  BdREN OpsSync
                 </p>
                 <p className="text-lg font-semibold text-foreground">Admin panel</p>
               </div>

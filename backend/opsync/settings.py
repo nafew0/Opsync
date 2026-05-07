@@ -1,7 +1,4 @@
-"""
-Django settings for reactdjango project.
-Template created from AniFight project.
-"""
+"""Django settings for opsync project."""
 
 import os
 import re
@@ -209,7 +206,7 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": db_engine,
-            "NAME": os.environ.get("DB_NAME", "reactdjango_db"),
+            "NAME": os.environ.get("DB_NAME", "opsync_db"),
             "USER": os.environ.get("DB_USER", "postgres"),
             "PASSWORD": os.environ.get("DB_PASSWORD", "postgres"),
             "HOST": os.environ.get("DB_HOST", "localhost"),
@@ -344,7 +341,7 @@ else:
     CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-            "LOCATION": "reactdjango-local-cache",
+            "LOCATION": "opsync-local-cache",
         }
     }
 
@@ -366,7 +363,7 @@ SESSION_COOKIE_SECURE = env_bool("SESSION_COOKIE_SECURE", not DEBUG)
 SESSION_COOKIE_HTTPONLY = True
 
 AUTH_REFRESH_COOKIE_NAME = os.environ.get(
-    "AUTH_REFRESH_COOKIE_NAME", "reactdjango_refresh"
+    "AUTH_REFRESH_COOKIE_NAME", "opsync_refresh"
 )
 AUTH_REFRESH_COOKIE_PATH = os.environ.get("AUTH_REFRESH_COOKIE_PATH", "/api/auth/")
 AUTH_REFRESH_COOKIE_SECURE = env_bool("AUTH_REFRESH_COOKIE_SECURE", IS_PRODUCTION)
@@ -477,6 +474,13 @@ FACEBOOK_GRAPH_API_VERSION = (
 )
 GITHUB_OAUTH_CLIENT_ID = os.environ.get("GITHUB_OAUTH_CLIENT_ID", "").strip()
 GITHUB_OAUTH_CLIENT_SECRET = os.environ.get("GITHUB_OAUTH_CLIENT_SECRET", "").strip()
+BDREN_OAUTH_CLIENT_ID = os.environ.get("BDREN_OAUTH_CLIENT_ID", "").strip()
+BDREN_OAUTH_CLIENT_SECRET = os.environ.get("BDREN_OAUTH_CLIENT_SECRET", "").strip()
+BDREN_OAUTH_BASE_URL = (
+    os.environ.get("BDREN_OAUTH_BASE_URL", "https://accounts.bdren.net.bd").strip()
+    or "https://accounts.bdren.net.bd"
+).rstrip("/")
+BDREN_OAUTH_SCOPE = os.environ.get("BDREN_OAUTH_SCOPE", "").strip()
 
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
 AUDIT_LOG_LEVEL = os.environ.get("AUDIT_LOG_LEVEL", "INFO")

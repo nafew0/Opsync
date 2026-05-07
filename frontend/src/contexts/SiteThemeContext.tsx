@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
   buildSiteThemeVariables,
   DEFAULT_SITE_THEME_ID,
+  LEGACY_SITE_THEME_STORAGE_KEY,
   normalizeHex,
   resolveThemeColors,
   SITE_THEME_PRESETS,
@@ -42,7 +43,9 @@ function readInitialThemeState(): ThemeState {
     return fallback
   }
 
-  const stored = window.localStorage.getItem(SITE_THEME_STORAGE_KEY)
+  const stored =
+    window.localStorage.getItem(SITE_THEME_STORAGE_KEY)
+    || window.localStorage.getItem(LEGACY_SITE_THEME_STORAGE_KEY)
   if (!stored) {
     return fallback
   }
@@ -98,6 +101,7 @@ export function SiteThemeProvider({ children }: { children: React.ReactNode }) {
         customColors: activeColors,
       })
     )
+    window.localStorage.removeItem(LEGACY_SITE_THEME_STORAGE_KEY)
   }, [activeColors, themeState.mode, themeState.presetId])
 
   const setPresetTheme = (presetId: string) => {

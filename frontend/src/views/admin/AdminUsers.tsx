@@ -122,7 +122,7 @@ export default function AdminUsers() {
   }
 
   if (error) {
-    return <div className="theme-panel rounded-[1.8rem] p-6 text-sm text-rose-600">reactdjango could not load users right now.</div>
+    return <div className="theme-panel rounded-[1.8rem] p-6 text-sm text-rose-600">BdREN OpsSync could not load users right now.</div>
   }
 
   const currentPage = Number(params.page || 1)
@@ -133,7 +133,7 @@ export default function AdminUsers() {
       <CardHeader className="gap-4">
         <div>
           <CardTitle>Users</CardTitle>
-          <CardDescription>Search, filter, and inspect reactdjango accounts.</CardDescription>
+          <CardDescription>Search, filter, and inspect BdREN OpsSync accounts.</CardDescription>
         </div>
         <div className="grid gap-3 lg:grid-cols-[1.4fr_repeat(2,minmax(0,0.8fr))]">
           <Input
