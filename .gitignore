@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+
+# Markdown docs
+*.md
+!README.md
+!**/README.md
+
+# Tooling
+.pytest_cache/
+.coverage
+htmlcov/
+.vercel/
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
