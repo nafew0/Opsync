@@ -81,6 +81,9 @@ def sanitize_avatar_upload(uploaded_file):
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for User model."""
 
+    department_id = serializers.UUIDField(source="department.id", read_only=True, default=None)
+    department_name = serializers.CharField(source="department.name", read_only=True, default="")
+
     class Meta:
         model = User
         fields = [
@@ -97,8 +100,12 @@ class UserSerializer(serializers.ModelSerializer):
             "email_verified",
             "created_at",
             "updated_at",
+            "opsync_role",
+            "department_id",
+            "department_name",
+            "signature",
         ]
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = ["id", "created_at", "updated_at", "opsync_role", "department_id", "department_name"]
 
 
 class PublicBrandingSerializer(serializers.Serializer):
@@ -230,6 +237,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "organization",
             "designation",
             "phone",
+            "signature",
         ]
 
     def validate(self, attrs):

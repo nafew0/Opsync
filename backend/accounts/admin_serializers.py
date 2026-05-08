@@ -22,6 +22,9 @@ User = get_user_model()
 
 
 class AdminUserListSerializer(serializers.ModelSerializer):
+    department_id = serializers.UUIDField(source="department.id", read_only=True, default=None)
+    department_name = serializers.CharField(source="department.name", read_only=True, default="")
+
     class Meta:
         model = User
         fields = [
@@ -35,10 +38,16 @@ class AdminUserListSerializer(serializers.ModelSerializer):
             "email_verified",
             "created_at",
             "last_login",
+            "opsync_role",
+            "department_id",
+            "department_name",
         ]
 
 
 class AdminUserDetailSerializer(serializers.ModelSerializer):
+    department_id = serializers.UUIDField(source="department.id", read_only=True, default=None)
+    department_name = serializers.CharField(source="department.name", read_only=True, default="")
+
     class Meta:
         model = User
         fields = [
@@ -57,11 +66,40 @@ class AdminUserDetailSerializer(serializers.ModelSerializer):
             "email_verified",
             "created_at",
             "last_login",
+            "opsync_role",
+            "department_id",
+            "department_name",
         ]
 
 
 class AdminUserUpdateSerializer(serializers.Serializer):
     is_active = serializers.BooleanField(required=False)
+    opsync_role = serializers.ChoiceField(
+        choices=[
+            "employee", "supervisor", "line_manager",
+            "admin_officer", "am_dm", "finance_officer", "system_admin",
+        ],
+        required=False,
+    )
+    department = serializers.UUIDField(required=False, allow_null=True)
+
+    def update(self, instance, validated_data):
+        if "is_active" in validated_data:
+            instance.is_active = validated_data["is_active"]
+        if "opsync_role" in validated_data:
+            instance.opsync_role = validated_data["opsync_role"]
+        if "department" in validated_data:
+            from core.models import Department
+            dept_id = validated_data["department"]
+            if dept_id is None:
+                instance.department = None
+            else:
+                try:
+                    instance.department = Department.objects.get(pk=dept_id)
+                except Department.DoesNotExist:
+                    pass
+        instance.save()
+        return instance
 
 
 class SiteSettingsAdminSerializer(serializers.ModelSerializer):

@@ -157,6 +157,7 @@ INSTALLED_APPS = [
     "channels",
     # Local apps
     "accounts",
+    "core",
 ]
 
 MIDDLEWARE = [

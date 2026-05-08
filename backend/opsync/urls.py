@@ -9,8 +9,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/auth/", include("accounts.urls")),
     path("api/admin/", include("accounts.admin_urls")),
-    # Add your app URLs here:
-    # path("api/", include("myapp.urls")),
+    path("api/core/", include("core.urls")),
 ]
 
 # Serve media files in development

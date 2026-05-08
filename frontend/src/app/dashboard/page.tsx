@@ -1,10 +1,10 @@
-import ProtectedRoute from '@/components/ProtectedRoute'
+import OpsShell from '@/components/opsync/OpsShell'
 import Dashboard from '@/views/Dashboard'
 
 export default function DashboardPage() {
   return (
-    <ProtectedRoute>
+    <OpsShell>
       <Dashboard />
-    </ProtectedRoute>
+    </OpsShell>
   )
 }

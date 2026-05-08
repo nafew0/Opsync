@@ -255,6 +255,24 @@ class AdminUserDetailView(AdminAPIView):
                 locked_user.is_active = next_is_active
                 locked_user.save(update_fields=["is_active"])
 
+            update_fields = []
+            if "opsync_role" in validated:
+                locked_user.opsync_role = validated["opsync_role"]
+                update_fields.append("opsync_role")
+            if "department" in validated:
+                from core.models import Department
+                dept_id = validated["department"]
+                if dept_id is None:
+                    locked_user.department = None
+                else:
+                    try:
+                        locked_user.department = Department.objects.get(pk=dept_id)
+                    except Department.DoesNotExist:
+                        pass
+                update_fields.append("department")
+            if update_fields:
+                locked_user.save(update_fields=update_fields)
+
         log_audit_event(
             "admin_user_update",
             request=request,

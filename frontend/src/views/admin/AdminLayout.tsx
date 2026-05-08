@@ -3,9 +3,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   ArrowLeft,
+  Building2,
   LayoutDashboard,
   Settings2,
   ShieldCheck,
+  UserCog,
   Users,
 } from 'lucide-react'
 
@@ -16,12 +18,16 @@ import { cn } from '@/lib/utils'
 const NAV_ITEMS = [
   { to: '/admin', label: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/admin/users', label: 'Users', icon: Users },
+  { to: '/admin/departments', label: 'Departments', icon: Building2 },
+  { to: '/admin/roles', label: 'User Roles', icon: UserCog },
   { to: '/admin/settings', label: 'Settings', icon: Settings2 },
 ]
 
 function getAdminTitle(pathname: string) {
   if (pathname.startsWith('/admin/users/')) return 'User detail'
   if (pathname.startsWith('/admin/users')) return 'User management'
+  if (pathname.startsWith('/admin/departments')) return 'Departments'
+  if (pathname.startsWith('/admin/roles')) return 'User roles'
   if (pathname.startsWith('/admin/settings')) return 'Platform settings'
   return 'Admin overview'
 }

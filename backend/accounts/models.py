@@ -39,6 +39,29 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    OPSYNC_ROLE_CHOICES = [
+        ("employee", "Employee"),
+        ("supervisor", "Supervisor"),
+        ("line_manager", "Line Manager"),
+        ("admin_officer", "Admin Officer"),
+        ("am_dm", "AM/DM (Admin)"),
+        ("finance_officer", "Finance Officer"),
+        ("system_admin", "System Admin"),
+    ]
+    opsync_role = models.CharField(
+        max_length=20,
+        choices=OPSYNC_ROLE_CHOICES,
+        default="employee",
+    )
+    department = models.ForeignKey(
+        "core.Department",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="members",
+    )
+    signature = models.ImageField(upload_to="signatures/", null=True, blank=True)
+
     # Make email required and unique
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = ["email"]

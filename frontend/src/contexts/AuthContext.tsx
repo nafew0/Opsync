@@ -22,6 +22,10 @@ export interface User {
   is_active?: boolean
   last_login?: string
   created_at?: string
+  opsync_role?: string
+  department_id?: string | null
+  department_name?: string
+  signature?: string | null
 }
 
 interface AuthResult {

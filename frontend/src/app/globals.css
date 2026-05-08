@@ -62,3 +62,258 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+/* =========================================================
+   OpsSync Design Tokens
+   Based on the design language in opsync/Design/styles.css
+   ========================================================= */
+:root {
+  /* Ink scale (warm near-black → near-white) */
+  --ops-ink-900: oklch(0.18 0.01 80);
+  --ops-ink-700: oklch(0.32 0.01 80);
+  --ops-ink-500: oklch(0.5 0.01 80);
+  --ops-ink-400: oklch(0.62 0.008 80);
+  --ops-ink-300: oklch(0.78 0.006 80);
+  --ops-ink-200: oklch(0.88 0.005 80);
+  --ops-ink-100: oklch(0.94 0.004 80);
+  --ops-ink-50:  oklch(0.97 0.003 80);
+
+  /* Surface */
+  --ops-paper:     oklch(0.985 0.006 85);
+  --ops-surface:   #ffffff;
+  --ops-surface-2: oklch(0.975 0.005 85);
+
+  /* Primary — deep petrol teal */
+  --ops-primary:       oklch(0.35 0.06 205);
+  --ops-primary-600:   oklch(0.42 0.07 205);
+  --ops-primary-500:   oklch(0.5 0.075 205);
+  --ops-primary-200:   oklch(0.86 0.04 205);
+  --ops-primary-100:   oklch(0.94 0.025 205);
+  --ops-primary-50:    oklch(0.97 0.015 205);
+
+  /* Secondary — warm saffron / ochre */
+  --ops-secondary:     oklch(0.74 0.14 75);
+  --ops-secondary-700: oklch(0.6 0.13 65);
+  --ops-secondary-200: oklch(0.92 0.06 80);
+  --ops-secondary-100: oklch(0.96 0.04 80);
+
+  /* Accent — terracotta */
+  --ops-accent:        oklch(0.58 0.14 38);
+  --ops-accent-700:    oklch(0.48 0.13 35);
+  --ops-accent-200:    oklch(0.9 0.05 38);
+  --ops-accent-100:    oklch(0.95 0.03 38);
+
+  /* Status */
+  --ops-success:       oklch(0.55 0.1 150);
+  --ops-success-100:   oklch(0.94 0.04 150);
+  --ops-warning:       oklch(0.72 0.14 70);
+  --ops-warning-100:   oklch(0.95 0.05 75);
+  --ops-danger:        oklch(0.52 0.18 25);
+  --ops-danger-100:    oklch(0.95 0.04 25);
+  --ops-neutral-pill:  oklch(0.92 0.005 80);
+
+  /* Shadows */
+  --ops-shadow-sm: 0 1px 2px rgba(20,30,40,0.04), 0 0 0 1px rgba(20,30,40,0.04);
+  --ops-shadow-md: 0 6px 22px -8px rgba(20,30,40,0.08), 0 0 0 1px rgba(20,30,40,0.05);
+  --ops-shadow-lg: 0 18px 60px -20px rgba(20,30,40,0.18), 0 0 0 1px rgba(20,30,40,0.06);
+
+  /* Radii */
+  --ops-r-xs: 4px;
+  --ops-r-sm: 6px;
+  --ops-r-md: 10px;
+  --ops-r-lg: 14px;
+  --ops-r-xl: 18px;
+
+  /* Fonts */
+  --ops-font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --ops-font-script: "Snell Roundhand", "Apple Chancery", "Segoe Script", "Brush Script MT", cursive;
+}
+
+/* OpsSync shell layout */
+.ops-app {
+  display: grid;
+  grid-template-columns: 248px 1fr;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--ops-paper);
+  position: relative;
+}
+.ops-app::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(60,40,20,0.025) 1px, transparent 1px);
+  background-size: 3px 3px;
+  z-index: 0;
+}
+
+/* Sidebar */
+.ops-sidebar {
+  background: var(--ops-ink-900);
+  color: oklch(0.85 0.005 80);
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(255,255,255,0.04);
+  position: relative;
+  z-index: 10;
+  overflow-y: auto;
+}
+
+/* Topbar */
+.ops-topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 28px;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: saturate(140%) blur(12px);
+  border-bottom: 1px solid var(--ops-ink-200);
+  height: 60px;
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 5;
+}
+
+/* Main content area */
+.ops-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+.ops-page {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px 60px;
+}
+
+/* OpsSync A4 preview */
+.ops-a4 {
+  background: var(--ops-surface);
+  aspect-ratio: 210 / 297;
+  width: 100%;
+  border: 1px solid var(--ops-ink-200);
+  border-radius: 8px;
+  box-shadow: var(--ops-shadow-md);
+  padding: 32px 30px 26px;
+  font-size: 10.5px;
+  color: var(--ops-ink-900);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Status pills */
+.ops-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 99px;
+  border: 1px solid transparent;
+  letter-spacing: 0.005em;
+}
+.ops-pill .ops-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.ops-pill-success { background: var(--ops-success-100); color: oklch(0.42 0.1 150); border-color: oklch(0.85 0.05 150); }
+.ops-pill-warning { background: var(--ops-warning-100); color: oklch(0.5 0.13 60); border-color: oklch(0.88 0.06 70); }
+.ops-pill-danger  { background: var(--ops-danger-100);  color: var(--ops-danger); border-color: oklch(0.86 0.06 25); }
+.ops-pill-info    { background: var(--ops-primary-100); color: var(--ops-primary); border-color: var(--ops-primary-200); }
+.ops-pill-neutral { background: var(--ops-neutral-pill); color: var(--ops-ink-500); border-color: var(--ops-ink-200); }
+
+/* ─── Sidebar nav items ─────────────────────────────────────────────────── */
+.brand { display: flex; align-items: center; gap: 10px; padding: 6px 8px 18px; }
+.brand-mark {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: linear-gradient(140deg, var(--ops-secondary), var(--ops-accent));
+  color: var(--ops-ink-900);
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+  flex: 0 0 auto;
+}
+.brand-name { font-weight: 600; letter-spacing: -0.01em; color: #fff; font-size: 15px; }
+.brand-sub { font-size: 11px; color: oklch(0.65 0.01 80); margin-top: 1px; }
+
+.nav-section-label {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em;
+  color: oklch(0.55 0.01 80); padding: 16px 10px 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border-radius: 8px;
+  color: oklch(0.78 0.005 80); font-size: 13px; font-weight: 450;
+  text-decoration: none; transition: background .15s, color .15s;
+  position: relative;
+}
+.nav-item:hover { background: rgba(255,255,255,0.04); color: #fff; }
+.nav-item[data-active] {
+  background: linear-gradient(90deg, oklch(0.35 0.06 205 / 0.5), oklch(0.35 0.06 205 / 0.15));
+  color: #fff;
+}
+.nav-item[data-active]::before {
+  content: ""; position: absolute; left: -14px; top: 8px; bottom: 8px;
+  width: 3px; background: var(--ops-secondary); border-radius: 0 3px 3px 0;
+}
+.nav-icon { width: 16px; height: 16px; flex: 0 0 auto; opacity: 0.85; }
+.nav-badge {
+  margin-left: auto; font-size: 10px;
+  background: var(--ops-accent); color: #fff;
+  padding: 1px 6px; border-radius: 99px; font-weight: 600;
+}
+.nav-badge.muted { background: rgba(255,255,255,0.1); color: oklch(0.8 0.005 80); }
+
+.sidebar-footer {
+  margin-top: auto; padding: 12px 8px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; gap: 10px;
+}
+.avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--ops-secondary), var(--ops-accent));
+  color: var(--ops-ink-900); display: grid; place-items: center;
+  font-weight: 600; font-size: 12px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+  flex: 0 0 auto;
+}
+.user-name { font-size: 13px; color: #fff; font-weight: 500; line-height: 1.2; }
+.user-role { font-size: 11px; color: oklch(0.6 0.01 80); }
+
+/* ─── Topbar elements ───────────────────────────────────────────────────── */
+.crumbs { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ops-ink-500); }
+.crumbs .sep { color: var(--ops-ink-300); }
+.search {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--ops-surface); border: 1px solid var(--ops-ink-200);
+  padding: 6px 10px; border-radius: 8px;
+  width: 280px; color: var(--ops-ink-500); font-size: 13px;
+}
+.search kbd {
+  font-family: var(--ops-font-mono); font-size: 10px;
+  background: var(--ops-ink-100); padding: 1px 5px;
+  border-radius: 4px; color: var(--ops-ink-500);
+  border: 1px solid var(--ops-ink-200);
+}
+.icon-btn {
+  width: 34px; height: 34px; display: grid; place-items: center;
+  border-radius: 8px; background: transparent; border: 1px solid transparent;
+  color: var(--ops-ink-500); cursor: pointer; position: relative;
+}
+.icon-btn:hover { background: var(--ops-ink-100); color: var(--ops-ink-900); }
+.icon-btn .dot {
+  position: absolute; top: 7px; right: 8px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--ops-accent); border: 2px solid var(--ops-surface);
+}
+
+/* Print: hide form, show preview full-width */
+@media print {
+  .ops-form-col { display: none !important; }
+  .ops-preview-col { width: 100% !important; position: static !important; }
+  .ops-sidebar, .ops-topbar { display: none !important; }
+  .ops-app { grid-template-columns: 1fr !important; height: auto !important; }
+}

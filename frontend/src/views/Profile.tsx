@@ -80,15 +80,19 @@ function getInitials(user: UserData | null, formData: ProfileFormData) {
 
 const AVATAR_MAX_SIZE_BYTES = 5 * 1024 * 1024
 const AVATAR_ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+const SIGNATURE_MAX_SIZE_BYTES = 500 * 1024  // 500 KB
+const SIGNATURE_ACCEPTED_TYPES = ['image/jpeg', 'image/png']
 
 const Profile = () => {
   const { user, updateUser } = useAuth()
   const { toast } = useToast()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const sigInputRef = useRef<HTMLInputElement>(null)
   const [formData, setFormData] = useState<ProfileFormData>(() => buildFormState(user))
   const [savingProfile, setSavingProfile] = useState(false)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const [avatarPreview, setAvatarPreview] = useState('')
+  const [uploadingSignature, setUploadingSignature] = useState(false)
 
   useEffect(() => {
     // Sync authenticated user data into the editable profile form.
@@ -157,6 +161,43 @@ const Profile = () => {
     }
     setUploadingAvatar(false)
     event.target.value = ''
+  }
+
+  const handleSignatureChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    if (!SIGNATURE_ACCEPTED_TYPES.includes(file.type)) {
+      toast({ title: 'Invalid format', description: 'Signature must be a PNG or JPG image.', variant: 'error' })
+      event.target.value = ''
+      return
+    }
+    if (file.size > SIGNATURE_MAX_SIZE_BYTES) {
+      toast({ title: 'Image too large', description: 'Signature image must be 500 KB or smaller.', variant: 'error' })
+      event.target.value = ''
+      return
+    }
+    setUploadingSignature(true)
+    const payload = new FormData()
+    payload.append('signature', file)
+    const result = await updateUser(payload)
+    if (result.success) {
+      toast({ title: 'Signature uploaded', description: 'Your signature will appear on documents.', variant: 'success' })
+    } else {
+      toast({ title: 'Signature upload failed', description: result.error, variant: 'error', duration: 4500 })
+    }
+    setUploadingSignature(false)
+    event.target.value = ''
+  }
+
+  const handleRemoveSignature = async () => {
+    setUploadingSignature(true)
+    const result = await updateUser({ signature: null })
+    if (result.success) {
+      toast({ title: 'Signature removed', description: 'Your signature has been removed.', variant: 'success' })
+    } else {
+      toast({ title: 'Could not remove signature', description: result.error, variant: 'error', duration: 4500 })
+    }
+    setUploadingSignature(false)
   }
 
   const profileFields = [
@@ -296,6 +337,98 @@ const Profile = () => {
                   </Button>
                 </div>
               </form>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* OpsSync role & department (read-only) + Signature */}
+        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+          {/* Role & Department */}
+          <Card className="theme-panel border-0">
+            <CardHeader className="pb-4">
+              <CardTitle>OpsSync role & department</CardTitle>
+              <CardDescription>Assigned by a system administrator. Contact admin to change.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Role</Label>
+                <Input
+                  readOnly
+                  value={
+                    user?.opsync_role
+                      ? user.opsync_role.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+                      : 'Employee'
+                  }
+                  className="h-11 rounded-2xl bg-muted"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Department</Label>
+                <Input
+                  readOnly
+                  value={user?.department_name || 'Not assigned'}
+                  className="h-11 rounded-2xl bg-muted"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Signature */}
+          <Card className="theme-panel border-0">
+            <CardHeader className="pb-4">
+              <CardTitle>Document signature</CardTitle>
+              <CardDescription>
+                Upload a PNG or JPG of your signature (max 500 KB). It appears on all printed requests.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <input
+                ref={sigInputRef}
+                type="file"
+                accept={SIGNATURE_ACCEPTED_TYPES.join(',')}
+                className="hidden"
+                onChange={handleSignatureChange}
+              />
+              {user?.signature ? (
+                <div className="rounded-2xl border border-dashed border-[rgb(var(--theme-border-rgb)/0.8)] bg-white p-4 text-center">
+                  <img
+                    src={resolveApiAssetUrl(user.signature)}
+                    alt="Your signature"
+                    className="mx-auto max-h-20 object-contain"
+                  />
+                  <p className="mt-2 text-xs text-muted-foreground">This is how your signature will appear on documents.</p>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-dashed border-[rgb(var(--theme-border-rgb)/0.8)] bg-muted/30 p-8 text-center text-sm text-muted-foreground">
+                  No signature uploaded. Your printed name will be used instead.
+                </div>
+              )}
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1 rounded-full"
+                  onClick={() => sigInputRef.current?.click()}
+                  disabled={uploadingSignature}
+                >
+                  {uploadingSignature ? (
+                    <><LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> Uploading…</>
+                  ) : (
+                    <><Camera className="mr-2 h-4 w-4" /> {user?.signature ? 'Replace' : 'Upload'} Signature</>
+                  )}
+                </Button>
+                {user?.signature && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="rounded-full text-destructive"
+                    onClick={handleRemoveSignature}
+                    disabled={uploadingSignature}
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
             </CardContent>
           </Card>
         </div>
