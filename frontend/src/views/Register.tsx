@@ -2,13 +2,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { AlertCircle, ArrowRight, LoaderCircle, MailCheck, RotateCw } from 'lucide-react'
+import { AlertCircle, ArrowRight, LoaderCircle, RotateCw } from 'lucide-react'
 
-import BrandLogo from '@/components/branding/BrandLogo'
+import AuthShell from '@/components/auth/AuthShell'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import SocialLoginButtons from '@/components/auth/SocialLoginButtons'
 import { useBranding } from '@/contexts/BrandingContext'
 import { useAuth } from '../contexts/AuthContext'
-import { Button } from '@/components/ui/button'
-import SocialLoginButtons from '@/components/auth/SocialLoginButtons'
 import { useToast } from '@/hooks/useToast'
 import { getSafeRedirect } from '@/utils/redirects'
 import { getSignupChallenge } from '@/services/auth'
@@ -26,10 +27,14 @@ interface SignupChallengeState {
   minimum_submit_seconds: number
 }
 
-const Register = () => {
+export default function Register() {
   const [formData, setFormData] = useState({
-    username: '', email: '', password: '', password2: '',
-    first_name: '', last_name: '',
+    username: '',
+    email: '',
+    password: '',
+    password2: '',
+    first_name: '',
+    last_name: '',
     captcha_answer: '',
     company_website: '',
   })
@@ -61,10 +66,7 @@ const Register = () => {
     try {
       const response = await getSignupChallenge()
       setSignupChallenge(response)
-      setFormData((current) => ({
-        ...current,
-        captcha_answer: '',
-      }))
+      setFormData((current) => ({ ...current, captcha_answer: '' }))
     } catch {
       setSignupChallenge(null)
       setChallengeError('Could not load signup protection. Refresh the form and try again.')
@@ -109,22 +111,24 @@ const Register = () => {
 
   if (authLoading) {
     return (
-      <div className="theme-app-gradient flex h-[calc(100vh-4rem)] items-center justify-center">
-        <div className="theme-panel flex items-center gap-3 rounded-2xl px-5 py-4">
-          <LoaderCircle className="h-5 w-5 animate-spin text-primary" />
-          <span className="text-sm font-medium text-muted-foreground">Loading…</span>
+      <div className="ops-auth-shell flex items-center justify-center">
+        <div className="ops-card px-5 py-4 text-sm text-[color:var(--ops-ink-500)]">
+          <div className="flex items-center gap-3">
+            <LoaderCircle className="h-5 w-5 animate-spin text-[color:var(--ops-primary)]" />
+            Loading signup workspace…
+          </div>
         </div>
       </div>
     )
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((current) => ({ ...current, [event.target.name]: event.target.value }))
     setError('')
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
     if (!signupChallenge?.registration_token) {
       setError('Registration form is not ready yet. Refresh the page and try again.')
       return
@@ -137,11 +141,13 @@ const Register = () => {
       setLoading(false)
       return
     }
+
     const result = await register({
       ...formData,
       captcha_id: signupChallenge.captcha_id,
       registration_token: signupChallenge.registration_token,
     })
+
     if (result.success) {
       if (result.emailVerificationRequired) {
         setVerificationState({
@@ -189,234 +195,233 @@ const Register = () => {
   }
 
   return (
-    <div className="theme-app-gradient flex min-h-[calc(100vh-4rem)] items-center px-4 py-8 sm:px-6">
-      <div className="mx-auto w-full max-w-6xl">
-        <div className="theme-panel overflow-hidden rounded-[2.2rem]">
-          <div className="grid lg:grid-cols-[1.04fr_0.96fr]">
-            <section className="relative hidden min-h-[42rem] overflow-hidden border-b border-[rgb(var(--theme-border-rgb)/0.88)] bg-[rgb(var(--theme-muted-rgb)/0.82)] lg:flex lg:border-b-0 lg:border-r">
-              <img
-                src={registerBannerUrl}
-                alt="Register visual"
-                className="absolute inset-0 h-full w-full object-cover"
-                onError={(event) => {
-                  event.currentTarget.style.display = 'none'
-                }}
-              />
-              <div className="absolute inset-0 bg-[rgb(var(--theme-primary-ink-rgb)/0.38)]" />
-            </section>
-
-            <section className="bg-white px-6 py-7 sm:px-8 sm:py-8 lg:px-10">
-              <div className="mx-auto flex max-w-md flex-col justify-center">
-                <div className="mb-6 lg:hidden">
-                  <BrandLogo />
-                </div>
-
-                {verificationState ? (
-                  <>
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                      Email Verification
-                    </p>
-                    <div className="mt-5 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[rgb(var(--theme-secondary-soft-rgb))] text-[rgb(var(--theme-secondary-rgb))]">
-                      <MailCheck className="h-5 w-5" />
-                    </div>
-                    <h1 className="mt-5 text-2xl font-bold tracking-tight text-[rgb(var(--theme-primary-ink-rgb))]">
-                      Check your email
-                    </h1>
-                    <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                      Your account is ready, but you need to verify your email before
-                      signing in.
-                      {verificationState.emailHint
-                        ? ` We sent the first link to ${verificationState.emailHint}.`
-                        : ''}
-                    </p>
-                    <div className="mt-6 space-y-3">
-                      <Button
-                        type="button"
-                        className="w-full rounded-xl"
-                        onClick={handleResendVerification}
-                        disabled={resending || resendCooldown > 0}
-                      >
-                        {resending
-                          ? 'Resending...'
-                          : resendCooldown > 0
-                            ? `Resend in ${resendCooldown}s`
-                            : 'Resend verification email'}
-                      </Button>
-                      <Link
-                        href="/login"
-                        className="flex h-11 w-full items-center justify-center rounded-xl border border-[rgb(var(--theme-border-rgb))] bg-white text-sm font-semibold text-foreground transition hover:bg-[rgb(var(--theme-muted-rgb)/0.55)]"
-                      >
-                        Back to sign in
-                      </Link>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                      New Account
-                    </p>
-                    <h1 className="mt-3 text-2xl font-bold tracking-tight text-[rgb(var(--theme-primary-ink-rgb))]">
-                      Create account
-                    </h1>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Already have one?{' '}
-                      <Link
-                        href="/login"
-                        className="font-semibold text-primary transition hover:text-primary/80"
-                      >
-                        Sign in
-                      </Link>
-                    </p>
-
-                    <form onSubmit={handleSubmit} className="mt-5 space-y-3">
-                      {error && (
-                        <div className="flex items-center gap-2 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                          <AlertCircle className="h-4 w-4 shrink-0" />
-                          {error}
-                        </div>
-                      )}
-
-                      {[
-                        { name: 'username', label: 'Username', type: 'text', autoComplete: 'username', placeholder: 'Choose a username', required: true },
-                        { name: 'email', label: 'Email', type: 'email', autoComplete: 'email', placeholder: 'you@example.com', required: true },
-                        { name: 'first_name', label: 'First Name', type: 'text', autoComplete: 'given-name', placeholder: 'John', required: false },
-                        { name: 'last_name', label: 'Last Name', type: 'text', autoComplete: 'family-name', placeholder: 'Doe', required: false },
-                        { name: 'password', label: 'Password', type: 'password', autoComplete: 'new-password', placeholder: 'Create a password', required: true },
-                        { name: 'password2', label: 'Confirm Password', type: 'password', autoComplete: 'new-password', placeholder: 'Repeat your password', required: true },
-                      ].map((field) => (
-                        <div key={field.name} className="space-y-1">
-                          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                            {field.label}
-                          </label>
-                          <input
-                            name={field.name}
-                            type={field.type}
-                            autoComplete={field.autoComplete}
-                            placeholder={field.placeholder}
-                            value={formData[field.name as keyof typeof formData]}
-                            onChange={handleChange}
-                            required={field.required}
-                            className="h-10 w-full rounded-xl border border-[rgb(var(--theme-border-rgb))] bg-white px-4 text-sm text-foreground placeholder-muted-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-                          />
-                        </div>
-                      ))}
-
-                      <div className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
-                        <label htmlFor="company_website">Company website</label>
-                        <input
-                          id="company_website"
-                          name="company_website"
-                          type="text"
-                          tabIndex={-1}
-                          autoComplete="off"
-                          value={formData.company_website}
-                          onChange={handleChange}
-                        />
-                      </div>
-
-                      {challengeLoading ? (
-                        <div className="flex items-center gap-2 rounded-xl border border-[rgb(var(--theme-border-rgb))] bg-[rgb(var(--theme-muted-rgb)/0.5)] px-4 py-3 text-sm text-muted-foreground">
-                          <LoaderCircle className="h-4 w-4 animate-spin" />
-                          Preparing signup protection…
-                        </div>
-                      ) : challengeError ? (
-                        <div className="rounded-xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-                          <div className="flex items-start gap-2">
-                            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-                            <div className="space-y-2">
-                              <p>{challengeError}</p>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                className="rounded-xl"
-                                onClick={() => void loadSignupChallenge()}
-                              >
-                                Retry
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      ) : signupChallenge?.captcha_enabled ? (
-                        <div className="space-y-3 rounded-[1.2rem] border border-[rgb(var(--theme-border-rgb)/0.76)] bg-[rgb(var(--theme-muted-rgb)/0.45)] px-4 py-4">
-                          <div className="flex items-center justify-between gap-3">
-                            <div>
-                              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                Human check
-                              </p>
-                              <p className="mt-1 text-sm font-medium text-foreground">
-                                {signupChallenge.captcha_prompt}
-                              </p>
-                            </div>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              className="rounded-xl"
-                              onClick={() => void loadSignupChallenge(true)}
-                              disabled={challengeRefreshing}
-                            >
-                              {challengeRefreshing ? (
-                                <>
-                                  <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-                                  Refreshing…
-                                </>
-                              ) : (
-                                <>
-                                  <RotateCw className="mr-2 h-4 w-4" />
-                                  Refresh
-                                </>
-                              )}
-                            </Button>
-                          </div>
-                          <div className="space-y-1">
-                            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                              CAPTCHA answer
-                            </label>
-                            <input
-                              name="captcha_answer"
-                              type="text"
-                              inputMode="numeric"
-                              autoComplete="off"
-                              placeholder="Type the result"
-                              value={formData.captcha_answer}
-                              onChange={handleChange}
-                              required
-                              className="h-10 w-full rounded-xl border border-[rgb(var(--theme-border-rgb))] bg-white px-4 text-sm text-foreground placeholder-muted-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-                            />
-                          </div>
-                        </div>
-                      ) : null}
-
-                      <button
-                        type="submit"
-                        disabled={loading || challengeLoading || !signupChallenge?.registration_token}
-                        className="mt-1 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[0_4px_16px_rgb(var(--theme-primary-rgb)/0.3)] transition hover:bg-primary/90 disabled:opacity-50"
-                      >
-                        {loading ? (
-                          <>
-                            <LoaderCircle className="h-4 w-4 animate-spin" />
-                            Creating account…
-                          </>
-                        ) : (
-                          <>
-                            Create account
-                            <ArrowRight className="h-4 w-4" />
-                          </>
-                        )}
-                      </button>
-                    </form>
-
-                    <div className="mt-5">
-                      <SocialLoginButtons nextPath={redirectTo} />
-                    </div>
-                  </>
-                )}
-              </div>
-            </section>
-          </div>
+    <AuthShell
+      eyebrow={verificationState ? 'Email verification' : 'New account'}
+      title={verificationState ? 'Check your email' : 'Create account'}
+      description={
+        verificationState
+          ? `Your account is ready, but the email address must be verified before sign-in.${verificationState.emailHint ? ` The first link was sent to ${verificationState.emailHint}.` : ''}`
+          : 'Set up your BdREN OpsSync access using the same operational design language as the main app.'
+      }
+      showcaseTitle="Registration, verification, and anti-abuse controls in one calm flow."
+      showcaseDescription="Signup protection, social login, and email verification stay intact while the frontend adopts the shared editorial OpsSync system."
+      imageSrc={registerBannerUrl}
+      imageAlt="BdREN OpsSync registration banner"
+      metrics={[
+        { value: '120s', label: 'Resend cooldown' },
+        { value: 'Protected', label: 'Signup challenge' },
+        { value: 'Config-driven', label: 'Branding aware' },
+      ]}
+      highlights={[
+        'Registration challenge loading and refresh behavior remain unchanged.',
+        'Email verification handoff still pauses login until the address is confirmed.',
+        'Social registration routes keep using the same redirect logic as direct signup.',
+      ]}
+      footer={(
+        <div>
+          Already have an account?{' '}
+          <Link href="/login" className="ops-inline-link">
+            Sign in
+          </Link>
         </div>
-      </div>
-    </div>
+      )}
+    >
+      {verificationState ? (
+        <div className="space-y-4">
+          <div className="rounded-[14px] border border-[color:var(--ops-secondary-200)] bg-[color:var(--ops-secondary-100)]/60 p-4 text-sm leading-6 text-[color:var(--ops-ink-700)]">
+            Use the verification link in your inbox to activate the account. You can ask for another link below once the cooldown expires.
+          </div>
+          <Button
+            type="button"
+            className="w-full rounded-[10px]"
+            onClick={handleResendVerification}
+            disabled={resending || resendCooldown > 0}
+          >
+            {resending
+              ? 'Resending...'
+              : resendCooldown > 0
+                ? `Resend in ${resendCooldown}s`
+                : 'Resend verification email'}
+          </Button>
+          <Button asChild variant="outline" className="w-full rounded-[10px]">
+            <Link href="/login">Back to sign in</Link>
+          </Button>
+        </div>
+      ) : (
+        <>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error ? (
+              <div className="flex items-center gap-2 rounded-[12px] border border-[color:var(--ops-danger-100)] bg-[color:var(--ops-danger-100)] px-4 py-3 text-sm text-[color:var(--ops-danger)]">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                {error}
+              </div>
+            ) : null}
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                { name: 'first_name', label: 'First name', type: 'text', autoComplete: 'given-name', placeholder: 'First name' },
+                { name: 'last_name', label: 'Last name', type: 'text', autoComplete: 'family-name', placeholder: 'Last name' },
+                { name: 'username', label: 'Username', type: 'text', autoComplete: 'username', placeholder: 'Choose a username' },
+                { name: 'email', label: 'Email', type: 'email', autoComplete: 'email', placeholder: 'name@example.com' },
+              ].map((field) => (
+                <div key={field.name} className="space-y-2">
+                  <label className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--ops-ink-500)]">
+                    {field.label}
+                  </label>
+                  <Input
+                    name={field.name}
+                    type={field.type}
+                    autoComplete={field.autoComplete}
+                    placeholder={field.placeholder}
+                    value={formData[field.name as keyof typeof formData]}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <label className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--ops-ink-500)]">
+                  Password
+                </label>
+                <Input
+                  name="password"
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="Create a password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--ops-ink-500)]">
+                  Confirm password
+                </label>
+                <Input
+                  name="password2"
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="Repeat the password"
+                  value={formData.password2}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+              <label htmlFor="company_website">Company website</label>
+              <input
+                id="company_website"
+                name="company_website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={formData.company_website}
+                onChange={handleChange}
+              />
+            </div>
+
+            {challengeLoading ? (
+              <div className="rounded-[12px] border border-[color:var(--ops-ink-200)] bg-[color:var(--ops-ink-50)] px-4 py-3 text-sm text-[color:var(--ops-ink-500)]">
+                <div className="flex items-center gap-2">
+                  <LoaderCircle className="h-4 w-4 animate-spin" />
+                  Preparing signup protection…
+                </div>
+              </div>
+            ) : challengeError ? (
+              <div className="rounded-[12px] border border-[color:var(--ops-danger-100)] bg-[color:var(--ops-danger-100)] px-4 py-3 text-sm text-[color:var(--ops-danger)]">
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                    <p className="m-0">{challengeError}</p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="rounded-[10px]"
+                    onClick={() => void loadSignupChallenge()}
+                  >
+                    Retry
+                  </Button>
+                </div>
+              </div>
+            ) : signupChallenge?.captcha_enabled ? (
+              <div className="rounded-[14px] border border-[color:var(--ops-ink-200)] bg-[color:var(--ops-ink-50)] px-4 py-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--ops-ink-500)]">
+                      Human check
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-[color:var(--ops-ink-900)]">
+                      {signupChallenge.captcha_prompt}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="rounded-[10px]"
+                    onClick={() => void loadSignupChallenge(true)}
+                    disabled={challengeRefreshing}
+                  >
+                    {challengeRefreshing ? (
+                      <>
+                        <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                        Refreshing…
+                      </>
+                    ) : (
+                      <>
+                        <RotateCw className="mr-2 h-4 w-4" />
+                        Refresh
+                      </>
+                    )}
+                  </Button>
+                </div>
+                <div className="mt-3 space-y-2">
+                  <label className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--ops-ink-500)]">
+                    CAPTCHA answer
+                  </label>
+                  <Input
+                    name="captcha_answer"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    placeholder="Type the result"
+                    value={formData.captcha_answer}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+            ) : null}
+
+            <Button
+              type="submit"
+              disabled={loading || challengeLoading || !signupChallenge?.registration_token}
+              className="w-full rounded-[10px]"
+            >
+              {loading ? (
+                <>
+                  <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                  Creating account…
+                </>
+              ) : (
+                <>
+                  Create account
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </form>
+
+          <div className="mt-5">
+            <SocialLoginButtons nextPath={redirectTo} />
+          </div>
+        </>
+      )}
+    </AuthShell>
   )
 }
-
-export default Register

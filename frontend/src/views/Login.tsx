@@ -4,15 +4,16 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AlertCircle, ArrowRight, LoaderCircle, MailCheck } from 'lucide-react'
 
-import BrandLogo from '@/components/branding/BrandLogo'
+import AuthShell from '@/components/auth/AuthShell'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import SocialLoginButtons from '@/components/auth/SocialLoginButtons'
 import { useBranding } from '@/contexts/BrandingContext'
 import { useAuth } from '../contexts/AuthContext'
 import { useToast } from '@/hooks/useToast'
-import { Button } from '@/components/ui/button'
-import SocialLoginButtons from '@/components/auth/SocialLoginButtons'
 import { getSafeRedirect } from '@/utils/redirects'
 
-const Login = () => {
+export default function Login() {
   const [formData, setFormData] = useState({ username: '', password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -49,25 +50,27 @@ const Login = () => {
 
   if (authLoading) {
     return (
-      <div className="theme-app-gradient flex h-[calc(100vh-4rem)] items-center justify-center">
-        <div className="theme-panel flex items-center gap-3 rounded-2xl px-5 py-4">
-          <LoaderCircle className="h-5 w-5 animate-spin text-primary" />
-          <span className="text-sm font-medium text-muted-foreground">Loading…</span>
+      <div className="ops-auth-shell flex items-center justify-center">
+        <div className="ops-card px-5 py-4 text-sm text-[color:var(--ops-ink-500)]">
+          <div className="flex items-center gap-3">
+            <LoaderCircle className="h-5 w-5 animate-spin text-[color:var(--ops-primary)]" />
+            Loading account access…
+          </div>
         </div>
       </div>
     )
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((current) => ({ ...current, [event.target.name]: event.target.value }))
     setError('')
-    if (recoveryIdentifier && e.target.name === 'username') {
-      setRecoveryIdentifier(e.target.value)
+    if (recoveryIdentifier && event.target.name === 'username') {
+      setRecoveryIdentifier(event.target.value)
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
     setLoading(true)
     setError('')
     const result = await login(formData.username, formData.password)
@@ -111,162 +114,128 @@ const Login = () => {
   }
 
   return (
-    <div className="theme-app-gradient flex min-h-[calc(100vh-4rem)] items-center px-4 py-8 sm:px-6">
-      <div className="mx-auto w-full max-w-6xl">
-        <div className="theme-panel overflow-hidden rounded-[2.2rem]">
-          <div className="grid lg:grid-cols-[1.08fr_0.92fr]">
-            <section className="relative hidden min-h-[38rem] overflow-hidden border-b border-[rgb(var(--theme-border-rgb)/0.88)] bg-[rgb(var(--theme-muted-rgb)/0.82)] lg:flex lg:border-b-0 lg:border-r">
-              <img
-                src={loginBannerUrl}
-                alt="Login visual"
-                className="absolute inset-0 h-full w-full object-cover"
-                onError={(event) => {
-                  event.currentTarget.style.display = 'none'
-                }}
-              />
-              <div className="absolute inset-0 bg-[rgb(var(--theme-primary-ink-rgb)/0.38)]" />
-            </section>
-
-            <section className="bg-white px-6 py-7 sm:px-8 sm:py-8 lg:px-10">
-              <div className="mx-auto flex max-w-md flex-col justify-center">
-                <div className="mb-6 lg:hidden">
-                  <BrandLogo />
-                </div>
-
-                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                  Account Access
-                </p>
-                <h1 className="mt-3 text-2xl font-bold tracking-tight text-[rgb(var(--theme-primary-ink-rgb))]">
-                  Sign in
-                </h1>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Enter your credentials to continue.
-                </p>
-
-                <form onSubmit={handleSubmit} className="mt-7 space-y-5">
-                  {recoveryIdentifier ? (
-                    <div className="rounded-2xl border border-[rgb(var(--theme-secondary-strong-rgb)/0.9)] bg-[rgb(var(--theme-secondary-soft-rgb)/0.68)] p-4 text-sm text-[rgb(var(--theme-secondary-ink-rgb))]">
-                      <div className="flex items-start gap-3">
-                        <span className="theme-icon-secondary inline-flex h-10 w-10 items-center justify-center rounded-full">
-                          <MailCheck className="h-4 w-4" />
-                        </span>
-                        <div className="min-w-0 flex-1">
-                          <p className="font-semibold">Need help signing in?</p>
-                          <p className="mt-1 opacity-80">
-                            If the account is eligible, BdREN OpsSync can resend a verification email or you can request a password reset without confirming whether the account exists.
-                          </p>
-                          <div className="mt-3 flex flex-wrap gap-3">
-                            <Button
-                              type="button"
-                              variant="secondary"
-                              className="rounded-full"
-                              onClick={handleResendVerification}
-                              disabled={resending || resendCooldown > 0}
-                            >
-                              {resending
-                                ? 'Resending...'
-                                : resendCooldown > 0
-                                  ? `Resend in ${resendCooldown}s`
-                                  : 'Resend verification email'}
-                            </Button>
-                            <Link
-                              href="/forgot-password"
-                              className="self-center text-sm font-semibold text-primary hover:text-primary/80"
-                            >
-                              Reset password
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {error && (
-                    <div className="flex items-center gap-2 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                      <AlertCircle className="h-4 w-4 shrink-0" />
-                      {error}
-                    </div>
-                  )}
-
-                  <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Username or Email
-                    </label>
-                    <input
-                      name="username"
-                      type="text"
-                      autoComplete="username"
-                      placeholder="name@example.com"
-                      value={formData.username}
-                      onChange={handleChange}
-                      required
-                      className="h-11 w-full rounded-xl border border-[rgb(var(--theme-border-rgb))] bg-white px-4 text-sm text-foreground placeholder-muted-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Password
-                    </label>
-                    <input
-                      name="password"
-                      type="password"
-                      autoComplete="current-password"
-                      placeholder="Enter your password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      required
-                      className="h-11 w-full rounded-xl border border-[rgb(var(--theme-border-rgb))] bg-white px-4 text-sm text-foreground placeholder-muted-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-                    />
-                    <div className="pt-1 text-right">
-                      <Link
-                        href="/forgot-password"
-                        className="text-xs font-semibold text-primary transition hover:text-primary/80"
-                      >
-                        Forgot password?
-                      </Link>
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-[0_4px_16px_rgb(var(--theme-primary-rgb)/0.3)] transition hover:bg-primary/90 disabled:opacity-50"
-                  >
-                    {loading ? (
-                      <>
-                        <LoaderCircle className="h-4 w-4 animate-spin" />
-                        Signing in…
-                      </>
-                    ) : (
-                      <>
-                        Sign in
-                        <ArrowRight className="h-4 w-4" />
-                      </>
-                    )}
-                  </button>
-                </form>
-
-                <div className="mt-5">
-                  <SocialLoginButtons nextPath={redirectTo} />
-                </div>
-
-                <p className="mt-6 text-center text-sm text-muted-foreground">
-                  Don&apos;t have an account?{' '}
-                  <Link
-                    href="/register"
-                    className="font-semibold text-primary transition hover:text-primary/80"
-                  >
-                    Create one
-                  </Link>
-                </p>
+    <AuthShell
+      eyebrow="Account access"
+      title="Sign in"
+      description="Enter your credentials to continue into the BdREN OpsSync workspace."
+      showcaseTitle="Operational access without a separate visual language."
+      showcaseDescription="The sign-in flow now uses the same warm-paper system, document cues, and restrained panels as the internal application shell."
+      imageSrc={loginBannerUrl}
+      imageAlt="BdREN OpsSync login banner"
+      metrics={[
+        { value: '1 shell', label: 'Unified UX' },
+        { value: '120s', label: 'Resend cooldown' },
+        { value: 'Secure', label: 'Cookie session' },
+      ]}
+      highlights={[
+        'Verification resend and password recovery stay available from the same entry point.',
+        'Session completion and redirect handling are preserved.',
+        'Social login options still share the same post-auth redirect flow.',
+      ]}
+      footer={(
+        <div>
+          Don&apos;t have an account?{' '}
+          <Link href="/register" className="ops-inline-link">
+            Create one
+          </Link>
+        </div>
+      )}
+    >
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {recoveryIdentifier ? (
+          <div className="rounded-[14px] border border-[color:var(--ops-secondary-200)] bg-[color:var(--ops-secondary-100)]/60 p-4 text-sm text-[color:var(--ops-ink-700)]">
+            <div className="flex items-start gap-3">
+              <div className="ops-auth-note-mark">
+                <MailCheck className="h-4 w-4" />
               </div>
-            </section>
+              <div className="flex-1">
+                <p className="font-semibold text-[color:var(--ops-ink-900)]">Need help signing in?</p>
+                <p className="mt-1 leading-6">
+                  If the account is eligible, BdREN OpsSync can resend a verification email or let you request a password reset without confirming whether the account exists.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="rounded-full"
+                    onClick={handleResendVerification}
+                    disabled={resending || resendCooldown > 0}
+                  >
+                    {resending
+                      ? 'Resending...'
+                      : resendCooldown > 0
+                        ? `Resend in ${resendCooldown}s`
+                        : 'Resend verification email'}
+                  </Button>
+                  <Link href="/forgot-password" className="self-center text-sm font-semibold text-[color:var(--ops-primary)]">
+                    Reset password
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {error ? (
+          <div className="flex items-center gap-2 rounded-[12px] border border-[color:var(--ops-danger-100)] bg-[color:var(--ops-danger-100)] px-4 py-3 text-sm text-[color:var(--ops-danger)]">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {error}
+          </div>
+        ) : null}
+
+        <div className="space-y-2">
+          <label className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--ops-ink-500)]">
+            Username or email
+          </label>
+          <Input
+            name="username"
+            type="text"
+            autoComplete="username"
+            placeholder="name@example.com"
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[color:var(--ops-ink-500)]">
+            Password
+          </label>
+          <Input
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            placeholder="Enter your password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <div className="pt-1 text-right">
+            <Link href="/forgot-password" className="text-xs font-semibold text-[color:var(--ops-primary)]">
+              Forgot password?
+            </Link>
           </div>
         </div>
+
+        <Button type="submit" disabled={loading} className="w-full rounded-[10px]">
+          {loading ? (
+            <>
+              <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+              Signing in…
+            </>
+          ) : (
+            <>
+              Sign in
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </>
+          )}
+        </Button>
+      </form>
+
+      <div className="mt-5">
+        <SocialLoginButtons nextPath={redirectTo} />
       </div>
-    </div>
+    </AuthShell>
   )
 }
-
-export default Login

@@ -5,8 +5,8 @@ import { useSearchParams } from 'next/navigation'
 import { CheckCircle2, LoaderCircle, TriangleAlert } from 'lucide-react'
 
 import api from '@/services/api'
+import AuthShell from '@/components/auth/AuthShell'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 const INITIAL_STATE = {
   status: 'loading',
@@ -18,7 +18,7 @@ const INVALID_TOKEN_STATE = {
   message: 'Invalid or expired verification link. Please request a new verification email.',
 }
 
-const VerifyEmail = () => {
+export default function VerifyEmail() {
   const searchParams = useSearchParams()
   const token = searchParams?.get('token')?.trim() || ''
   const [verificationState, setVerificationState] = useState(() =>
@@ -67,56 +67,58 @@ const VerifyEmail = () => {
   const isSuccess = verificationState.status === 'success'
 
   return (
-    <div className="theme-app-gradient flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-8 sm:px-6">
-      <Card className="theme-panel w-full max-w-xl border-0">
-        <CardHeader className="items-center text-center">
-          <div
-            className={`inline-flex h-14 w-14 items-center justify-center rounded-full ${
-              isSuccess
-                ? 'bg-emerald-100 text-emerald-700'
-                : verificationState.status === 'error'
-                  ? 'bg-rose-100 text-rose-700'
-                  : 'bg-[rgb(var(--theme-primary-soft-rgb))] text-primary'
-            }`}
-          >
-            {verificationState.status === 'loading' ? (
-              <LoaderCircle className="h-6 w-6 animate-spin" />
-            ) : isSuccess ? (
-              <CheckCircle2 className="h-6 w-6" />
-            ) : (
-              <TriangleAlert className="h-6 w-6" />
-            )}
-          </div>
-          <CardTitle className="mt-4">
-            {verificationState.status === 'loading'
-              ? 'Verifying email'
-              : isSuccess
-                ? 'Email verified'
-                : 'Verification failed'}
-          </CardTitle>
-          <CardDescription className="max-w-md text-center text-sm leading-6">
-            {verificationState.message}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex justify-center gap-3">
+    <AuthShell
+      eyebrow="Email verification"
+      title={verificationState.status === 'loading' ? 'Verifying email' : isSuccess ? 'Email verified' : 'Verification failed'}
+      description={verificationState.message}
+      showcaseTitle="Verification uses the same shell as the rest of account access."
+      showcaseDescription="Email confirmation is now framed within the editorial authentication surface instead of a separate card-only treatment."
+      metrics={[
+        { value: '1 link', label: 'Token-based' },
+        { value: 'Safe', label: 'Auth handoff' },
+        { value: 'Shared', label: 'Design system' },
+      ]}
+      highlights={[
+        'Verification still resolves against the existing backend endpoint.',
+        'Success and failure states keep their original routing options.',
+      ]}
+    >
+      <div className="space-y-4">
+        <div
+          className={`inline-flex h-14 w-14 items-center justify-center rounded-full ${
+            isSuccess
+              ? 'bg-[color:var(--ops-success-100)] text-[color:var(--ops-success)]'
+              : verificationState.status === 'error'
+                ? 'bg-[color:var(--ops-danger-100)] text-[color:var(--ops-danger)]'
+                : 'bg-[color:var(--ops-primary-100)] text-[color:var(--ops-primary)]'
+          }`}
+        >
+          {verificationState.status === 'loading' ? (
+            <LoaderCircle className="h-6 w-6 animate-spin" />
+          ) : isSuccess ? (
+            <CheckCircle2 className="h-6 w-6" />
+          ) : (
+            <TriangleAlert className="h-6 w-6" />
+          )}
+        </div>
+
+        <div className="flex gap-3">
           {isSuccess ? (
-            <Button asChild className="rounded-full">
+            <Button asChild className="rounded-[10px]">
               <Link href="/login">Go to login</Link>
             </Button>
           ) : (
             <>
-              <Button asChild className="rounded-full">
+              <Button asChild className="rounded-[10px]">
                 <Link href="/login">Back to login</Link>
               </Button>
-              <Button asChild variant="secondary" className="rounded-full">
+              <Button asChild variant="outline" className="rounded-[10px]">
                 <Link href="/register">Create account again</Link>
               </Button>
             </>
           )}
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </div>
+    </AuthShell>
   )
 }
-
-export default VerifyEmail

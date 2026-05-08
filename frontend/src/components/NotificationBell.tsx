@@ -47,11 +47,23 @@ export default function NotificationBell() {
   // Load notifications on open
   useEffect(() => {
     if (!open) return
-    setLoading(true)
+    let active = true
     fetchNotifications()
-      .then((data) => setNotifications(data.slice(0, 10)))
+      .then((data) => {
+        if (active) {
+          setNotifications(data.slice(0, 10))
+        }
+      })
       .catch(() => {})
-      .finally(() => setLoading(false))
+      .finally(() => {
+        if (active) {
+          setLoading(false)
+        }
+      })
+
+    return () => {
+      active = false
+    }
   }, [open])
 
   // Close on outside click
@@ -74,7 +86,14 @@ export default function NotificationBell() {
       <button
         className="icon-btn"
         title="Notifications"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          setOpen((current) => {
+            if (!current) {
+              setLoading(true)
+            }
+            return !current
+          })
+        }}
         aria-label={`Notifications${unread > 0 ? ` (${unread} unread)` : ''}`}
       >
         <OpsIcon name="bell" size={16} />

@@ -16,21 +16,21 @@ interface ThemeState {
 const WHITE_RGB: Rgb = { r: 255, g: 255, b: 255 }
 const FOREGROUND_RGB: Rgb = { r: 15, g: 23, b: 42 }
 const DEFAULT_SITE_COLORS: ThemeColors = {
-  primary: '#f79945',
-  secondary: '#bc5eb3',
-  accent: '#5b2d62',
+  primary: '#245a66',
+  secondary: '#b9872e',
+  accent: '#b25942',
 }
 
 export const SITE_THEME_STORAGE_KEY = 'opsync-site-theme'
 export const LEGACY_SITE_THEME_STORAGE_KEY = 'reactdjango-site-theme'
 
-export const DEFAULT_SITE_THEME_ID = 'quest-default'
+export const DEFAULT_SITE_THEME_ID = 'opsync-editorial'
 
 export const SITE_THEME_PRESETS = [
   {
-    id: 'quest-default',
-    name: 'BdREN OpsSync Core',
-    description: 'Apricot and orchid with a deep plum accent.',
+    id: 'opsync-editorial',
+    name: 'OpsSync Editorial',
+    description: 'Petrol teal, ochre, and terracotta on warm paper.',
     colors: DEFAULT_SITE_COLORS,
   },
   {

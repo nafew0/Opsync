@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
+import OpsPageHeader from '@/components/opsync/OpsPageHeader'
 import { useToast } from '@/hooks/useToast'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -381,8 +382,15 @@ export default function AdminSettings() {
   >
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-      <Card className="theme-panel rounded-[1.8rem] border-0">
+    <div className="ops-stack">
+      <OpsPageHeader
+        eyebrow="Control room"
+        title="Platform settings"
+        subtitle="Manage authentication defaults, branding assets, signup protection, and AI provider settings from the same OpsSync shell."
+      />
+
+      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+        <Card className="theme-panel rounded-[1.8rem] border-0">
         <CardHeader>
           <CardTitle>Authentication defaults</CardTitle>
           <CardDescription>
@@ -690,7 +698,7 @@ export default function AdminSettings() {
         </CardContent>
       </Card>
 
-      <Card className="theme-panel rounded-[1.8rem] border-0">
+        <Card className="theme-panel rounded-[1.8rem] border-0">
         <CardHeader>
           <CardTitle>AI provider configuration</CardTitle>
           <CardDescription>
@@ -785,7 +793,8 @@ export default function AdminSettings() {
             </Button>
           </div>
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   )
 }

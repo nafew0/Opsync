@@ -54,7 +54,7 @@ export function CustomSelect({
           type="button"
           disabled={disabled}
           className={cn(
-            'inline-flex h-11 w-full items-center justify-between gap-3 rounded-2xl border border-input bg-background px-3 text-left text-sm text-foreground transition hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60',
+            'inline-flex h-11 w-full items-center justify-between gap-3 rounded-[10px] border border-[color:var(--ops-ink-200)] bg-white px-3 text-left text-[13px] text-[color:var(--ops-ink-900)] transition hover:border-[color:var(--ops-ink-300)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ops-primary-200)] disabled:cursor-not-allowed disabled:opacity-60',
             triggerClassName
           )}
         >
@@ -78,6 +78,7 @@ export function CustomSelect({
         portal={portal}
         className={cn(
           'theme-panel w-[var(--radix-dropdown-menu-trigger-width)] min-w-[14rem] max-w-[calc(100vw-2rem)] rounded-2xl p-2',
+          'border border-[color:var(--ops-ink-200)] bg-white shadow-[var(--ops-shadow-lg)]',
           'max-h-72 overflow-y-auto',
           contentClassName
         )}
@@ -93,8 +94,8 @@ export function CustomSelect({
               className={cn(
                 'rounded-xl px-3 py-2.5 text-sm',
                 isSelected
-                  ? 'bg-[rgb(var(--theme-primary-soft-rgb)/0.72)] text-[rgb(var(--theme-primary-ink-rgb))]'
-                  : 'text-foreground'
+                  ? 'bg-[color:var(--ops-primary-100)] text-[color:var(--ops-primary)]'
+                  : 'text-[color:var(--ops-ink-900)]'
               )}
             >
               <span className="truncate">{option.label}</span>

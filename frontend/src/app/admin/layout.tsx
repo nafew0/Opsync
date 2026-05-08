@@ -1,5 +1,10 @@
-import AdminShell from '@/components/AdminShell'
+import AdminRoute from '@/components/AdminRoute'
+import OpsShell from '@/components/opsync/OpsShell'
 
 export default function AdminLayoutShim({ children }: { children: React.ReactNode }) {
-  return <AdminShell>{children}</AdminShell>
+  return (
+    <OpsShell>
+      <AdminRoute>{children}</AdminRoute>
+    </OpsShell>
+  )
 }

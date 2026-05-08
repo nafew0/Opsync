@@ -1,6 +1,7 @@
 'use client'
 import { useQuery } from '@tanstack/react-query'
 
+import OpsPageHeader from '@/components/opsync/OpsPageHeader'
 import QLineChart from '@/components/charts/QLineChart'
 import QPieChart from '@/components/charts/QPieChart'
 import { Badge } from '@/components/ui/badge'
@@ -44,7 +45,12 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="ops-stack">
+      <OpsPageHeader
+        eyebrow="Control room"
+        title="Admin overview"
+        subtitle="Review account growth, verification coverage, and recent platform activity from the main operational shell."
+      />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <SummaryCard
           label="Total users"

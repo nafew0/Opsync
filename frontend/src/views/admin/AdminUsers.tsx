@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
+import OpsPageHeader from '@/components/opsync/OpsPageHeader'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CustomSelect } from '@/components/ui/custom-select'
@@ -129,44 +130,51 @@ export default function AdminUsers() {
   const totalPages = Math.max(1, Math.ceil((data?.count || 0) / 20))
 
   return (
-    <Card className="theme-panel rounded-[1.8rem] border-0">
-      <CardHeader className="gap-4">
-        <div>
-          <CardTitle>Users</CardTitle>
-          <CardDescription>Search, filter, and inspect BdREN OpsSync accounts.</CardDescription>
-        </div>
-        <div className="grid gap-3 lg:grid-cols-[1.4fr_repeat(2,minmax(0,0.8fr))]">
-          <Input
-            placeholder="Search username or email"
-            value={params.search}
-            onChange={(event) =>
-              updateSearchParams(searchParamString, { search: event.target.value }, router, pathname)
-            }
-          />
-          <CustomSelect
-            value={params.is_active}
-            onChange={(value) => updateSearchParams(searchParamString, { is_active: String(value) }, router, pathname)}
-            options={[
-              { label: 'All statuses', value: '' },
-              { label: 'Active', value: 'true' },
-              { label: 'Inactive', value: 'false' },
-            ]}
-          />
-          <CustomSelect
-            value={params.ordering}
-            onChange={(value) => updateSearchParams(searchParamString, { ordering: String(value) }, router, pathname)}
-            options={[
-              { label: 'Newest first', value: '-created_at' },
-              { label: 'Oldest first', value: 'created_at' },
-              { label: 'Username A-Z', value: 'username' },
-              { label: 'Username Z-A', value: '-username' },
-            ]}
-          />
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-5">
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
+    <div className="ops-stack">
+      <OpsPageHeader
+        eyebrow="Control room"
+        title="Users"
+        subtitle="Search, filter, and inspect BdREN OpsSync account records without leaving the operational shell."
+      />
+
+      <Card className="theme-panel rounded-[1.8rem] border-0">
+        <CardHeader className="gap-4">
+          <div>
+            <CardTitle>Users</CardTitle>
+            <CardDescription>Search, filter, and inspect BdREN OpsSync accounts.</CardDescription>
+          </div>
+          <div className="grid gap-3 lg:grid-cols-[1.4fr_repeat(2,minmax(0,0.8fr))]">
+            <Input
+              placeholder="Search username or email"
+              value={params.search}
+              onChange={(event) =>
+                updateSearchParams(searchParamString, { search: event.target.value }, router, pathname)
+              }
+            />
+            <CustomSelect
+              value={params.is_active}
+              onChange={(value) => updateSearchParams(searchParamString, { is_active: String(value) }, router, pathname)}
+              options={[
+                { label: 'All statuses', value: '' },
+                { label: 'Active', value: 'true' },
+                { label: 'Inactive', value: 'false' },
+              ]}
+            />
+            <CustomSelect
+              value={params.ordering}
+              onChange={(value) => updateSearchParams(searchParamString, { ordering: String(value) }, router, pathname)}
+              options={[
+                { label: 'Newest first', value: '-created_at' },
+                { label: 'Oldest first', value: 'created_at' },
+                { label: 'Username A-Z', value: 'username' },
+                { label: 'Username Z-A', value: '-username' },
+              ]}
+            />
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-left text-sm">
             <thead className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
@@ -198,34 +206,35 @@ export default function AdminUsers() {
           </table>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-muted-foreground">
-            Showing page {currentPage} of {totalPages}.
-          </p>
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              className="rounded-xl"
-              disabled={currentPage <= 1}
-              onClick={() =>
-                updateSearchParams(searchParamString, { page: String(currentPage - 1) }, router, pathname)
-              }
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              className="rounded-xl"
-              disabled={currentPage >= totalPages}
-              onClick={() =>
-                updateSearchParams(searchParamString, { page: String(currentPage + 1) }, router, pathname)
-              }
-            >
-              Next
-            </Button>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-muted-foreground">
+              Showing page {currentPage} of {totalPages}.
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="rounded-xl"
+                disabled={currentPage <= 1}
+                onClick={() =>
+                  updateSearchParams(searchParamString, { page: String(currentPage - 1) }, router, pathname)
+                }
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                className="rounded-xl"
+                disabled={currentPage >= totalPages}
+                onClick={() =>
+                  updateSearchParams(searchParamString, { page: String(currentPage + 1) }, router, pathname)
+                }
+              >
+                Next
+              </Button>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

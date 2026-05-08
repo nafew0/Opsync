@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
+import OpsPageHeader from '@/components/opsync/OpsPageHeader'
 import { useToast } from '@/hooks/useToast'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -115,7 +116,13 @@ export default function AdminUserDetail() {
   const { user } = data
 
   return (
-    <div className="space-y-6">
+    <div className="ops-stack">
+      <OpsPageHeader
+        eyebrow="Control room"
+        title="User detail"
+        subtitle="Review identity, verification, and administrative recovery actions for this account."
+      />
+
       <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
         <Card className="theme-panel rounded-[1.8rem] border-0">
           <CardHeader>

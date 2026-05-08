@@ -2,6 +2,7 @@
 import { useMemo, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
+import OpsPageHeader from '@/components/opsync/OpsPageHeader'
 import { CustomSelect } from '@/components/ui/custom-select'
 import { Input } from '@/components/ui/input'
 import {
@@ -13,7 +14,7 @@ import {
 } from '@/components/ui/card'
 import { getAdminUsers, updateAdminUser } from '@/services/admin'
 import { fetchDepartments } from '@/services/core'
-import { ROLES, ROLE_LABELS } from '@/config/opsync'
+import { ROLES } from '@/config/opsync'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -149,7 +150,13 @@ export default function AdminRoles() {
   }))
 
   return (
-    <div className="space-y-5">
+    <div className="ops-stack">
+      <OpsPageHeader
+        eyebrow="Control room"
+        title="User roles"
+        subtitle="Assign operational roles and departments while keeping account governance inside the main shell."
+      />
+
       {/* Role summary strip */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
         {roleCounts.filter((r) => r.count > 0 || r.level >= 3).map((r) => (

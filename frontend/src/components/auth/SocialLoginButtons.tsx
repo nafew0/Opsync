@@ -89,7 +89,7 @@ export default function SocialLoginButtons({ nextPath = '/dashboard' }: { nextPa
 
   if (isLoading) {
     return (
-      <div className="rounded-xl border border-[rgb(var(--theme-border-rgb)/0.76)] bg-white/70 px-4 py-3 text-sm text-muted-foreground">
+      <div className="rounded-[12px] border border-[color:var(--ops-ink-200)] bg-white/70 px-4 py-3 text-sm text-[color:var(--ops-ink-500)]">
         Checking social login availability...
       </div>
     )
@@ -102,22 +102,22 @@ export default function SocialLoginButtons({ nextPath = '/dashboard' }: { nextPa
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3">
-        <div className="h-px flex-1 bg-[rgb(var(--theme-border-rgb)/0.76)]" />
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+        <div className="h-px flex-1 bg-[color:var(--ops-ink-200)]" />
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--ops-ink-500)]">
           Or continue with
         </p>
-        <div className="h-px flex-1 bg-[rgb(var(--theme-border-rgb)/0.76)]" />
+        <div className="h-px flex-1 bg-[color:var(--ops-ink-200)]" />
       </div>
 
       {isError ? (
-        <div className="flex items-center gap-2 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="flex items-center gap-2 rounded-[12px] border border-[color:var(--ops-danger-100)] bg-[color:var(--ops-danger-100)] px-4 py-3 text-sm text-[color:var(--ops-danger)]">
           <AlertCircle className="h-4 w-4 shrink-0" />
           {providerError}
         </div>
       ) : null}
 
       {actionError ? (
-        <div className="flex items-center gap-2 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="flex items-center gap-2 rounded-[12px] border border-[color:var(--ops-danger-100)] bg-[color:var(--ops-danger-100)] px-4 py-3 text-sm text-[color:var(--ops-danger)]">
           <AlertCircle className="h-4 w-4 shrink-0" />
           {actionError}
         </div>
@@ -133,7 +133,7 @@ export default function SocialLoginButtons({ nextPath = '/dashboard' }: { nextPa
               key={provider.id}
               type="button"
               variant="outline"
-              className="h-auto min-h-11 justify-center gap-2 border-[rgb(var(--theme-border-rgb)/0.76)] bg-white/80 px-3 py-2"
+              className="h-auto min-h-11 justify-center gap-2 border-[color:var(--ops-ink-200)] bg-white/80 px-3 py-2"
               onClick={() => handleSocialLogin(provider.id)}
               disabled={Boolean(pendingProvider) || !provider.available}
               title={isConfigured ? `Continue with ${provider.name}` : `${provider.name} credentials are not configured.`}
@@ -146,7 +146,7 @@ export default function SocialLoginButtons({ nextPath = '/dashboard' }: { nextPa
               <span className="flex min-w-0 flex-col leading-tight">
                 <span>{provider.name}</span>
                 {!isConfigured ? (
-                  <span className="text-[0.68rem] font-medium text-muted-foreground">
+                  <span className="text-[0.68rem] font-medium text-[color:var(--ops-ink-500)]">
                     Setup needed
                   </span>
                 ) : null}

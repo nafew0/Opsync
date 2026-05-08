@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
+import OpsPageHeader from '@/components/opsync/OpsPageHeader'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -141,7 +142,7 @@ export default function AdminDepartments() {
   const inactive = departments.filter((d) => !d.is_active)
 
   return (
-    <>
+    <div className="ops-stack">
       {modalDept !== null && (
         <DeptModal
           initial={modalDept === 'new' ? undefined : modalDept}
@@ -150,6 +151,12 @@ export default function AdminDepartments() {
           saving={saveMutation.isPending}
         />
       )}
+
+      <OpsPageHeader
+        eyebrow="Control room"
+        title="Departments"
+        subtitle="Maintain the organization structure used in assignment, approval routing, and user records."
+      />
 
       <Card className="theme-panel rounded-[1.8rem] border-0">
         <CardHeader className="flex-row items-start justify-between gap-4">
@@ -227,6 +234,6 @@ export default function AdminDepartments() {
           </div>
         </CardContent>
       </Card>
-    </>
+    </div>
   )
 }

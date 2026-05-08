@@ -2,19 +2,16 @@
 import { usePathname } from 'next/navigation'
 
 import Navbar from '@/components/Navbar'
+import { INTERNAL_SHELL_PREFIXES } from '@/config/opsync'
 
 const NO_NAVBAR_PATHS = [
+  '/login',
+  '/register',
   '/forgot-password',
   '/reset-password',
+  '/verify-email',
   '/auth/social/callback',
-  // OpsSync operational pages use their own sidebar shell
-  '/dashboard',
-  '/meetings',
-  '/food',
-  '/logistics',
-  '/vehicles',
-  '/conveyance',
-  '/reports',
+  ...INTERNAL_SHELL_PREFIXES,
 ]
 
 export default function ClientShell({ children }: { children: React.ReactNode }) {

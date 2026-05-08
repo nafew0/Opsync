@@ -14,7 +14,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { LogOut, LayoutDashboard, Settings, ShieldCheck, User } from "lucide-react"
 import BrandLogo from '@/components/branding/BrandLogo'
-import ThemeStudioDialog from '@/components/theme/ThemeStudioDialog'
 import useAdminAccess from '@/hooks/useAdminAccess'
 import { resolveApiAssetUrl } from '@/services/api'
 
@@ -36,8 +35,8 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="fixed inset-x-0 top-0 z-50 border-b border-[rgb(var(--theme-border-rgb)/0.85)] bg-[rgb(var(--theme-neutral-rgb)/0.92)] backdrop-blur">
-      <div className="container mx-auto px-4">
+    <nav className="fixed inset-x-0 top-0 z-50 border-b border-[color:var(--ops-ink-200)] bg-[rgba(255,255,255,0.76)] backdrop-blur-xl">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center gap-3">
             <BrandLogo compact />
@@ -46,13 +45,10 @@ const Navbar = () => {
           <div className="hidden flex-1 lg:block" />
 
           <div className="flex items-center gap-3">
-            <div className="hidden md:block">
-              <ThemeStudioDialog />
-            </div>
             {isAuthenticated ? (
               <>
                 <Link href="/dashboard">
-                  <Button variant="ghost" className="rounded-full">Dashboard</Button>
+                  <Button variant="ghost" className="rounded-full border border-transparent px-4 text-[color:var(--ops-ink-700)] hover:bg-[color:var(--ops-ink-100)] hover:text-[color:var(--ops-ink-900)]">Dashboard</Button>
                 </Link>
 
                 <DropdownMenu>
@@ -60,13 +56,13 @@ const Navbar = () => {
                     <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={resolveApiAssetUrl(user?.avatar)} alt={user?.full_name || user?.username} />
-                        <AvatarFallback className="bg-[rgb(var(--theme-secondary-soft-rgb))] text-[rgb(var(--theme-secondary-ink-rgb))]">
+                        <AvatarFallback className="bg-[color:var(--ops-secondary-100)] text-[color:var(--ops-accent-700)]">
                           {getUserInitials()}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56 rounded-2xl" align="end" forceMount>
+                  <DropdownMenuContent className="w-56 rounded-2xl border-[color:var(--ops-ink-200)] bg-white/98 p-1 shadow-[var(--ops-shadow-lg)]" align="end" forceMount>
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">{user?.username}</p>
@@ -105,10 +101,10 @@ const Navbar = () => {
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="ghost" className="rounded-full">Log in</Button>
+                  <Button variant="ghost" className="rounded-full border border-transparent px-4 text-[color:var(--ops-ink-700)] hover:bg-[color:var(--ops-ink-100)] hover:text-[color:var(--ops-ink-900)]">Log in</Button>
                 </Link>
                 <Link href="/register">
-                  <Button className="rounded-full">Register</Button>
+                  <Button className="rounded-full px-5">Register</Button>
                 </Link>
               </>
             )}
