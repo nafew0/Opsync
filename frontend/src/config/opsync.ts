@@ -41,7 +41,7 @@ export const MODULES: ModuleConfig[] = [
     icon: 'calendar',
     colorVar: 'primary',
     shortLabel: 'Rooms & calendars',
-    planned: true,
+    planned: false,
   },
   {
     key: 'food',
@@ -249,6 +249,9 @@ export const ROUTE_CRUMBS: Record<string, string[]> = {
 
 export function getCrumbs(pathname: string): string[] {
   if (ROUTE_CRUMBS[pathname]) return ROUTE_CRUMBS[pathname]
+  if (pathname.startsWith('/meetings/')) {
+    return ['Request', 'Meeting Booking', 'Detail']
+  }
   const parts = pathname.split('/').filter(Boolean)
   return parts.length > 0 ? parts.map((p) => p.charAt(0).toUpperCase() + p.slice(1)) : ['Dashboard']
 }
@@ -311,12 +314,13 @@ export const PLACEHOLDER_PAGES: Record<string, PlaceholderPageConfig> = {
     href: '/meetings',
     eyebrow: 'Module 4.1 · MTG',
     title: 'Meeting booking workspace',
-    subtitle: 'Room calendars, slot selection, participant details, and printable booking previews will land here in Phase 2.',
+    subtitle: 'Live room availability, consecutive slot selection, and the document-first booking workflow are now active in this workspace.',
     icon: 'calendar',
     code: 'MTG',
-    badge: 'Planned for Phase 2',
+    badge: 'Live module',
     accent: 'primary',
     notes: [
+      'Board Room now exists as the seeded default room for scheduling.',
       'Live room availability and consecutive-slot selection.',
       'Meeting detail form with document preview and approval flow.',
       'Printable booking output aligned with the OpsSync document format.',

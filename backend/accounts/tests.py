@@ -614,6 +614,23 @@ class TokenRefreshSecurityTests(AccountsBaseTestCase):
         self.assertIn("access", response.data)
         self.assertIn(get_refresh_cookie_name(), response.cookies)
 
+    def test_blacklisted_refresh_token_returns_unauthorized_and_clears_cookie(self):
+        refresh = RefreshToken.for_user(self.user)
+        refresh.blacklist()
+        self.client.cookies[get_refresh_cookie_name()] = str(refresh)
+
+        response = self.client.post(
+            "/api/auth/token/refresh/",
+            {},
+            format="json",
+            HTTP_ORIGIN="http://testserver",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.data["detail"], "Refresh token is invalid or expired.")
+        self.assertIn(get_refresh_cookie_name(), response.cookies)
+        self.assertEqual(response.cookies[get_refresh_cookie_name()].value, "")
+
 
 @override_settings(DB_ENGINE="django.db.backends.sqlite3")
 class ProfileUpdateSecurityTests(AccountsBaseTestCase):

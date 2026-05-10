@@ -158,6 +158,7 @@ INSTALLED_APPS = [
     # Local apps
     "accounts",
     "core",
+    "meetings",
 ]
 
 MIDDLEWARE = [
@@ -363,9 +364,7 @@ CSRF_COOKIE_SECURE = env_bool("CSRF_COOKIE_SECURE", not DEBUG)
 SESSION_COOKIE_SECURE = env_bool("SESSION_COOKIE_SECURE", not DEBUG)
 SESSION_COOKIE_HTTPONLY = True
 
-AUTH_REFRESH_COOKIE_NAME = os.environ.get(
-    "AUTH_REFRESH_COOKIE_NAME", "opsync_refresh"
-)
+AUTH_REFRESH_COOKIE_NAME = os.environ.get("AUTH_REFRESH_COOKIE_NAME", "opsync_refresh")
 AUTH_REFRESH_COOKIE_PATH = os.environ.get("AUTH_REFRESH_COOKIE_PATH", "/api/auth/")
 AUTH_REFRESH_COOKIE_SECURE = env_bool("AUTH_REFRESH_COOKIE_SECURE", IS_PRODUCTION)
 AUTH_REFRESH_COOKIE_SAMESITE = os.environ.get("AUTH_REFRESH_COOKIE_SAMESITE", "Strict")

@@ -1,5 +1,8 @@
 # Django
 Django==4.2.10
+
+# Production WSGI server
+gunicorn==21.2.0
 djangorestframework==3.14.0
 
 # Database

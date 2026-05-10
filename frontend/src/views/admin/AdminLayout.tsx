@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import {
   ArrowLeft,
   Building2,
+  CalendarRange,
   LayoutDashboard,
   Settings2,
   ShieldCheck,
@@ -14,11 +15,13 @@ import {
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import OpsUserMenu from '@/components/opsync/OpsUserMenu'
 
 const NAV_ITEMS = [
   { to: '/admin', label: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/admin/users', label: 'Users', icon: Users },
   { to: '/admin/departments', label: 'Departments', icon: Building2 },
+  { to: '/admin/rooms', label: 'Meeting Rooms', icon: CalendarRange },
   { to: '/admin/roles', label: 'User Roles', icon: UserCog },
   { to: '/admin/settings', label: 'Settings', icon: Settings2 },
 ]
@@ -27,6 +30,7 @@ function getAdminTitle(pathname: string) {
   if (pathname.startsWith('/admin/users/')) return 'User detail'
   if (pathname.startsWith('/admin/users')) return 'User management'
   if (pathname.startsWith('/admin/departments')) return 'Departments'
+  if (pathname.startsWith('/admin/rooms')) return 'Meeting rooms'
   if (pathname.startsWith('/admin/roles')) return 'User roles'
   if (pathname.startsWith('/admin/settings')) return 'Platform settings'
   return 'Admin overview'
@@ -117,6 +121,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {pageTitle}
               </h1>
             </div>
+            <OpsUserMenu />
           </div>
           {children}
         </section>

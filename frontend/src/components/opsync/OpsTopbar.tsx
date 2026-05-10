@@ -3,6 +3,7 @@ import { usePathname } from 'next/navigation'
 
 import { getCrumbs } from '@/config/opsync'
 import { OpsIcon } from './OpsIcons'
+import OpsUserMenu from './OpsUserMenu'
 
 interface OpsTopbarProps {
   rightSlot?: React.ReactNode
@@ -35,13 +36,16 @@ export default function OpsTopbar({ rightSlot }: OpsTopbarProps) {
         <kbd>⌘K</kbd>
       </div>
 
-      {/* Language toggle */}
-      <button className="icon-btn" title="Switch language">
-        <OpsIcon name="bangla" size={16} />
-      </button>
+      <div className="ops-topbar-actions">
+        {/* Language toggle */}
+        <button className="icon-btn" title="Switch language">
+          <OpsIcon name="bangla" size={16} />
+        </button>
 
-      {/* Notification bell slot — filled by NotificationBell */}
-      {rightSlot}
+        {/* Notification bell slot — filled by NotificationBell */}
+        {rightSlot}
+        <OpsUserMenu />
+      </div>
     </div>
   )
 }

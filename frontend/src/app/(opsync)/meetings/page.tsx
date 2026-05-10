@@ -1,5 +1,5 @@
-import OpsPlaceholderPage from '@/components/opsync/OpsPlaceholderPage'
+import MeetingCalendarPage from '@/views/meetings/MeetingCalendarPage'
 
 export default function MeetingsPage() {
-  return <OpsPlaceholderPage route="/meetings" />
+  return <MeetingCalendarPage />
 }

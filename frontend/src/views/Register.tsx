@@ -1,5 +1,5 @@
 'use client'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AlertCircle, ArrowRight, LoaderCircle, RotateCw } from 'lucide-react'
@@ -36,8 +36,9 @@ export default function Register() {
     first_name: '',
     last_name: '',
     captcha_answer: '',
-    company_website: '',
   })
+  const honeypotRef = useRef<HTMLInputElement>(null)
+  const challengeLoadedAtRef = useRef<number | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [verificationState, setVerificationState] = useState<VerificationState | null>(null)
@@ -66,6 +67,7 @@ export default function Register() {
     try {
       const response = await getSignupChallenge()
       setSignupChallenge(response)
+      challengeLoadedAtRef.current = Date.now()
       setFormData((current) => ({ ...current, captcha_answer: '' }))
     } catch {
       setSignupChallenge(null)
@@ -134,6 +136,18 @@ export default function Register() {
       return
     }
 
+    const minimumAgeMs = (signupChallenge.minimum_submit_seconds ?? 0) * 1000
+    const loadedAt = challengeLoadedAtRef.current ?? 0
+    const elapsedMs = Date.now() - loadedAt
+    if (elapsedMs < minimumAgeMs) {
+      await new Promise<void>((resolve) => setTimeout(resolve, minimumAgeMs - elapsedMs))
+    }
+
+    if ((honeypotRef.current?.value ?? '').trim()) {
+      setError('Registration could not be completed. Please refresh the form and try again.')
+      return
+    }
+
     setLoading(true)
     setError('')
     if (formData.password !== formData.password2) {
@@ -146,6 +160,7 @@ export default function Register() {
       ...formData,
       captcha_id: signupChallenge.captcha_id,
       registration_token: signupChallenge.registration_token,
+      company_website: '',
     })
 
     if (result.success) {
@@ -313,15 +328,17 @@ export default function Register() {
             </div>
 
             <div className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
-              <label htmlFor="company_website">Company website</label>
+              <label htmlFor="hp_field">Leave blank</label>
               <input
-                id="company_website"
-                name="company_website"
+                ref={honeypotRef}
+                id="hp_field"
+                name="hp_field"
                 type="text"
                 tabIndex={-1}
-                autoComplete="off"
-                value={formData.company_website}
-                onChange={handleChange}
+                aria-hidden="true"
+                autoComplete="nope"
+                data-lpignore="true"
+                data-1p-ignore=""
               />
             </div>
 

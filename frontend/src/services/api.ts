@@ -15,6 +15,7 @@ declare module 'axios' {
 }
 
 let inMemoryAccessToken = ''
+let refreshAccessTokenPromise: Promise<string> | null = null
 const AUTH_REFRESH_EXCLUDED_PATHS = [
   '/auth/login/',
   '/auth/register/',
@@ -53,7 +54,7 @@ export function clearAccessToken() {
   inMemoryAccessToken = ''
 }
 
-export async function refreshAccessToken() {
+async function requestRefreshedAccessToken() {
   const response = await axios.post(
     `${API_URL}/auth/token/refresh/`,
     {},
@@ -68,6 +69,16 @@ export async function refreshAccessToken() {
   const nextAccessToken = response.data?.access || ''
   setAccessToken(nextAccessToken)
   return nextAccessToken
+}
+
+export async function refreshAccessToken() {
+  if (!refreshAccessTokenPromise) {
+    refreshAccessTokenPromise = requestRefreshedAccessToken().finally(() => {
+      refreshAccessTokenPromise = null
+    })
+  }
+
+  return refreshAccessTokenPromise
 }
 
 export function resolveApiAssetUrl(value: string | null | undefined): string {

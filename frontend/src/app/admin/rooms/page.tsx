@@ -1,5 +1,5 @@
-import OpsPlaceholderPage from '@/components/opsync/OpsPlaceholderPage'
+import AdminRooms from '@/views/admin/AdminRooms'
 
 export default function AdminRoomsPage() {
-  return <OpsPlaceholderPage route="/admin/rooms" />
+  return <AdminRooms />
 }

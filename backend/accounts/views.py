@@ -538,7 +538,7 @@ class VerifiedTokenRefreshView(TokenRefreshView):
         serializer = self.get_serializer(data={"refresh": refresh_token})
         try:
             serializer.is_valid(raise_exception=True)
-        except DRFValidationError:
+        except (DRFValidationError, TokenError):
             response = Response(
                 {"detail": "Refresh token is invalid or expired."},
                 status=status.HTTP_401_UNAUTHORIZED,
