@@ -16,7 +16,7 @@ const NO_NAVBAR_PATHS = [
 
 export default function ClientShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() ?? ''
-  const showNavbar = !NO_NAVBAR_PATHS.some((p) => pathname.startsWith(p))
+  const showNavbar = pathname !== '/' && !NO_NAVBAR_PATHS.some((p) => pathname.startsWith(p))
 
   return (
     <>

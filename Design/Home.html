@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BdREN OpsSync — One portal. All operations. Zero paperwork.</title>
+  <link rel="stylesheet" href="home.css">
+</head>
+<body>
+
+<!-- =============== NAV =============== -->
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="#top">
+      <div class="mark">B</div>
+      <div>
+        <div class="name">BdREN OpsSync</div>
+        <div class="sub">admin.bdren.net.bd</div>
+      </div>
+    </a>
+    <nav class="nav-links">
+      <a class="nav-link" href="#modules">Modules</a>
+      <a class="nav-link" href="#workflow">How it works</a>
+      <a class="nav-link" href="#why">Why OpsSync</a>
+      <a class="nav-link" href="#help">Help</a>
+    </nav>
+    <div class="nav-cta">
+      <span style="display:inline-flex; align-items:center; gap:8px; font-size:12px; color:var(--ink-500); padding:6px 10px; border:1px solid var(--ink-200); border-radius:99px;">
+        <span style="width:6px; height:6px; border-radius:50%; background:var(--success); box-shadow:0 0 8px var(--success);"></span>
+        All systems operational
+      </span>
+      <button class="btn primary" id="cta-signin">Sign in with BdREN ID
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- =============== HERO =============== -->
+<section id="top" class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow reveal">
+          <span class="ping"></span>
+          v1.0 · Internal Operations Portal
+        </div>
+        <h1 class="reveal d1">
+          One portal.<br>
+          <span class="scribe">All operations.</span><br>
+          <em>Zero paperwork.</em>
+        </h1>
+        <p class="lead reveal d2">
+          BdREN OpsSync digitises every administrative workflow at the Bangladesh Research and Education Network — meeting bookings, food, logistics, vehicles, and conveyance claims — into a single, role-aware portal. Submit a request in under three minutes. Watch every approval step in real time.
+        </p>
+        <div class="hero-actions reveal d3">
+          <button class="btn primary large" id="cta-hero">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
+            Sign in with BdREN ID
+          </button>
+          <a class="btn ghost large" href="#workflow">
+            See how it works
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        <div class="hero-meta reveal d4">
+          <span class="pill-tiny">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-7 8-13a8 8 0 0 0-16 0c0 6 8 13 8 13z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            Hosted in Bangladesh
+          </span>
+          <span class="pill-tiny">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1l9 4v6c0 5-4 9-9 11-5-2-9-6-9-11V5l9-4z"/><path d="M9 12l2 2 4-4"/></svg>
+            SSO via BdREN Directory
+          </span>
+          <span class="pill-tiny">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            Audit-grade trail
+          </span>
+          <span class="pill-tiny">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5l5 14"/><path d="M14 5h4"/><path d="M14 12h3"/><path d="M14 19h4"/></svg>
+            English · বাংলা
+          </span>
+        </div>
+      </div>
+
+      <div class="hero-orb reveal d2">
+        <div class="orb-rings">
+          <div class="orb-ring r2"></div>
+          <div class="orb-ring r1"></div>
+          <div class="orb-ring r3"></div>
+        </div>
+
+        <div class="orb-core">
+          <div style="text-align:center;">
+            <div class="label">OpsSync</div>
+            <div class="big">5 modules · 1 portal</div>
+            <div style="font-family: var(--font-mono); font-size:10px; opacity:0.6; margin-top:8px; letter-spacing:0.1em;">
+              BDREN-2026
+            </div>
+          </div>
+        </div>
+
+        <!-- Orbit 1 -->
+        <div class="orbiter orb-orbit s1" style="--start: 20deg; --r: -36%;">
+          <div class="orbiter-card">
+            <div class="ic" style="background: oklch(0.94 0.025 205); color: var(--primary);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18"/><path d="M7 3v4"/><path d="M17 3v4"/><rect x="3" y="5" width="18" height="16" rx="2"/></svg>
+            </div>
+            <div class="lbl-row">
+              <span>Boardroom · Wed 09:30</span>
+              <span class="ref">BDREN-MTG-2026-00247</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="orbiter orb-orbit s1" style="--start: 200deg; --r: -36%;">
+          <div class="orbiter-card">
+            <div class="ic" style="background: oklch(0.96 0.04 80); color: var(--secondary-700);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16"/><path d="M5 17a7 7 0 0 1 14 0"/><path d="M12 7V4"/></svg>
+            </div>
+            <div class="lbl-row">
+              <span>Lunch · 14 attendees</span>
+              <span class="ref">BDREN-FOD-2026-00412</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orbit 2 -->
+        <div class="orbiter orb-orbit s2" style="--start: 80deg; --r: -46%;">
+          <div class="orbiter-card">
+            <div class="ic" style="background: oklch(0.95 0.03 38); color: var(--accent-700);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H4a1 1 0 0 1-1-1v-3l2-5h14l2 5v3a1 1 0 0 1-1 1h-1"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+            </div>
+            <div class="lbl-row">
+              <span>Microbus · UIU Site Visit</span>
+              <span class="ref">BDREN-VEH-2026-00421</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="orbiter orb-orbit s2" style="--start: 260deg; --r: -46%;">
+          <div class="orbiter-card">
+            <div class="ic" style="background: oklch(0.94 0.04 150); color: oklch(0.42 0.1 150);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg>
+            </div>
+            <div class="lbl-row">
+              <span>A4 Paper · 3 reams</span>
+              <span class="ref">BDREN-LOG-2026-00188</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orbit 3 -->
+        <div class="orbiter orb-orbit s3" style="--start: 140deg; --r: -56%;">
+          <div class="orbiter-card">
+            <div class="ic" style="background: var(--ink-100); color: var(--ink-700);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v18l-3-2-3 2-3-2-3 2-2-2V3z"/><path d="M9 8h6"/><path d="M9 12h6"/></svg>
+            </div>
+            <div class="lbl-row">
+              <span>Conveyance · BDT 2,340</span>
+              <span class="ref">BDREN-CVY-2026-00309 · paid</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- pulses -->
+        <div class="orb-pulse" style="transform: translate(60px, -160px); animation: blip 2.4s ease-in-out infinite 0s;"></div>
+        <div class="orb-pulse" style="transform: translate(-120px, 90px); animation: blip 2.4s ease-in-out infinite 0.8s;"></div>
+        <div class="orb-pulse" style="transform: translate(140px, 60px); animation: blip 2.4s ease-in-out infinite 1.6s; background: var(--accent); box-shadow: 0 0 12px var(--accent);"></div>
+
+        <!-- floating ticker -->
+        <div class="ticker">
+          <span class="blip"></span>
+          <span style="font-family: var(--font-mono); font-size:10px; color: var(--ink-500); letter-spacing:0.06em;">LIVE</span>
+          <span style="color: var(--ink-700);"><strong>23</strong> requests approved today</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== TRUST BAR =============== -->
+<section class="trust">
+  <div class="container trust-inner">
+    <span class="trust-label">By the numbers</span>
+    <div class="trust-stats">
+      <div class="trust-stat">
+        <div class="num" data-count="200">200<em>+</em></div>
+        <div class="lbl">BdREN employees served</div>
+      </div>
+      <div class="trust-stat">
+        <div class="num" data-count="100"><em>100%</em></div>
+        <div class="lbl">paperless target by Q4</div>
+      </div>
+      <div class="trust-stat">
+        <div class="num" data-count="60">60<em>%</em></div>
+        <div class="lbl">faster approval cycles</div>
+      </div>
+      <div class="trust-stat">
+        <div class="num" data-count="3">3<em> min</em></div>
+        <div class="lbl">to submit any request</div>
+      </div>
+      <div class="trust-stat">
+        <div class="num"><em>99.5%</em></div>
+        <div class="lbl">uptime SLA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== MODULES =============== -->
+<section class="section" id="modules">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-eyebrow reveal">§4 — Module Specifications</div>
+      <h2 class="reveal d1">Five services, <em>one signature</em>.</h2>
+      <p class="lead reveal d2">Every workflow your team runs on paper today, rebuilt as a structured digital request with the right approval chain, real-time status, and an audit-grade trail. Pick a tile to preview the live form.</p>
+    </div>
+
+    <div class="mods">
+      <a class="mod featured reveal" href="BdREN OpsSync.html">
+        <span class="code">4.1 · MTG</span>
+        <div class="icbox" style="background: var(--primary-100); color: var(--primary);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18"/><path d="M7 3v4"/><path d="M17 3v4"/><rect x="3" y="5" width="18" height="16" rx="2"/></svg>
+        </div>
+        <h3>Meeting Slot Booking</h3>
+        <p>Calendar-centric booking with real-time slot availability across every room. Drag to select consecutive slots, auto-prevent double-bookings, and ship .ics to your calendar.</p>
+        <div class="preview">
+          <span style="color:var(--success);">●</span><span>Boardroom · Wed 09:30–11:00</span><span class="pill go">Available</span>
+          <span style="color:oklch(0.7 0.13 70);">●</span><span>Innovate Lab · Thu 14:00</span><span class="pill ye">Reserved</span>
+        </div>
+        <div class="arr">Open the booking calendar →</div>
+      </a>
+
+      <a class="mod featured reveal d1" href="BdREN OpsSync.html">
+        <span class="code">4.2 · FOD</span>
+        <div class="icbox" style="background: var(--secondary-100); color: var(--secondary-700);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16"/><path d="M4 17h16"/><path d="M5 17a7 7 0 0 1 14 0"/><path d="M12 7V4"/><path d="M9 4h6"/></svg>
+        </div>
+        <h3>Meeting Food Requisition</h3>
+        <p>Order meals or refreshments with auto-calculated totals, policy-limit enforcement per food type, and live English + Bangla amount-in-words on the official requisition.</p>
+        <div class="preview">
+          <span style="font-weight:600;">Lunch · 14 ppl</span><span>BDT 9,100 · within policy</span><span class="pill go">Approved</span>
+        </div>
+        <div class="arr">Open the food form →</div>
+      </a>
+
+      <a class="mod reveal d2" href="BdREN OpsSync.html">
+        <span class="code">4.3 · LOG</span>
+        <div class="icbox" style="background: var(--accent-100); color: var(--accent-700);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>
+        </div>
+        <h3>Logistics & Inventory</h3>
+        <p>Live stock visibility, low-stock alerts, per-user consumption history, and AM/DM approval flow.</p>
+        <div class="arr">Open inventory →</div>
+      </a>
+
+      <a class="mod reveal d3" href="BdREN OpsSync.html">
+        <span class="code">4.4 · VEH</span>
+        <div class="icbox" style="background: var(--primary-100); color: var(--primary);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H4a1 1 0 0 1-1-1v-3l2-5h14l2 5v3a1 1 0 0 1-1 1h-1"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 13h14"/></svg>
+        </div>
+        <h3>Vehicle Requisition</h3>
+        <p>Fleet calendar, driver roster, conflict detection, and post-trip log with km + fuel tracking.</p>
+        <div class="arr">Open fleet →</div>
+      </a>
+
+      <a class="mod reveal d4" href="BdREN OpsSync.html">
+        <span class="code">4.5 · CVY</span>
+        <div class="icbox" style="background: var(--secondary-100); color: var(--secondary-700);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v18l-3-2-3 2-3-2-3 2-2-2V3z"/><path d="M9 8h6"/><path d="M9 12h6"/><path d="M9 16h4"/></svg>
+        </div>
+        <h3>Conveyance Bill Claim</h3>
+        <p>Repeating journey rows with anomaly flags, two-stage approval, and batch payment processing.</p>
+        <div class="arr">Open claims →</div>
+      </a>
+    </div>
+
+    <div class="marquee" style="margin-top:64px;">
+      <div class="marquee-track">
+        <span class="marquee-item"><span class="dot"></span>BdREN HQ · Banani</span>
+        <span class="marquee-item"><span class="dot"></span>Network Operations</span>
+        <span class="marquee-item"><span class="dot"></span>Member Universities · 122</span>
+        <span class="marquee-item"><span class="dot"></span>Finance Division</span>
+        <span class="marquee-item"><span class="dot"></span>Admin Division</span>
+        <span class="marquee-item"><span class="dot"></span>Trust & Compliance</span>
+        <span class="marquee-item"><span class="dot"></span>Engineering · Fibre & PoP</span>
+        <!-- duplicate for seamless loop -->
+        <span class="marquee-item"><span class="dot"></span>BdREN HQ · Banani</span>
+        <span class="marquee-item"><span class="dot"></span>Network Operations</span>
+        <span class="marquee-item"><span class="dot"></span>Member Universities · 122</span>
+        <span class="marquee-item"><span class="dot"></span>Finance Division</span>
+        <span class="marquee-item"><span class="dot"></span>Admin Division</span>
+        <span class="marquee-item"><span class="dot"></span>Trust & Compliance</span>
+        <span class="marquee-item"><span class="dot"></span>Engineering · Fibre & PoP</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== WORKFLOW =============== -->
+<section class="workflow" id="workflow">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="section-eyebrow">Workflow</div>
+      <h2>Every request, <em>traced like a packet</em>.</h2>
+      <p class="lead">Every approval step is logged with timestamp, IP, and approver identity — constituting a legal-grade audit trail. Watch a request travel its approval chain in real time.</p>
+    </div>
+
+    <div class="flow-stages">
+      <div class="flow-packet"></div>
+      <div class="flow-stage">
+        <div class="flow-num">01</div>
+        <div class="flow-bubble">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        </div>
+        <h4>Submit</h4>
+        <p>Auto-filled from your BdREN profile — under 3 minutes.</p>
+      </div>
+      <div class="flow-stage">
+        <div class="flow-num">02</div>
+        <div class="flow-bubble">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path d="M12 7v5l3 2"/></svg>
+        </div>
+        <h4>Recommend</h4>
+        <p>Supervisor signs off within the SLA window.</p>
+      </div>
+      <div class="flow-stage">
+        <div class="flow-num">03</div>
+        <div class="flow-bubble">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+        </div>
+        <h4>Approve</h4>
+        <p>Line Manager / Finance / AM/DM as the matrix dictates.</p>
+      </div>
+      <div class="flow-stage">
+        <div class="flow-num">04</div>
+        <div class="flow-bubble">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4"/><path d="M3 7v10l9 4 9-4V7"/></svg>
+        </div>
+        <h4>Process</h4>
+        <p>Admin Officer acts — assign, dispatch, or pay.</p>
+      </div>
+      <div class="flow-stage">
+        <div class="flow-num">05</div>
+        <div class="flow-bubble">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14v14H5z"/><path d="M9 9h6v6H9z"/></svg>
+        </div>
+        <h4>Sealed</h4>
+        <p>Final document with all signatures, seal, and ref number.</p>
+      </div>
+    </div>
+
+    <div style="margin-top: 72px; display:grid; grid-template-columns: 1fr 1fr 1fr; gap:14px; max-width: 980px; margin-left:auto; margin-right:auto;">
+      <div style="background: oklch(0.22 0.01 80); border:1px solid oklch(0.3 0.01 80); border-radius:12px; padding:18px;">
+        <div style="font-family:var(--font-mono); font-size:10px; color: var(--secondary); letter-spacing:0.16em; margin-bottom:8px;">SLA</div>
+        <div style="font-size: 24px; font-weight:600; color:#fff; letter-spacing:-0.02em;">≤ 4 hours</div>
+        <div style="font-size:12px; color: oklch(0.65 0.01 80); margin-top:4px;">average approval window</div>
+      </div>
+      <div style="background: oklch(0.22 0.01 80); border:1px solid oklch(0.3 0.01 80); border-radius:12px; padding:18px;">
+        <div style="font-family:var(--font-mono); font-size:10px; color: var(--secondary); letter-spacing:0.16em; margin-bottom:8px;">ESCALATION</div>
+        <div style="font-size: 24px; font-weight:600; color:#fff; letter-spacing:-0.02em;">48 h</div>
+        <div style="font-size:12px; color: oklch(0.65 0.01 80); margin-top:4px;">auto-escalates to supervisor's supervisor</div>
+      </div>
+      <div style="background: oklch(0.22 0.01 80); border:1px solid oklch(0.3 0.01 80); border-radius:12px; padding:18px;">
+        <div style="font-family:var(--font-mono); font-size:10px; color: var(--secondary); letter-spacing:0.16em; margin-bottom:8px;">RETENTION</div>
+        <div style="font-size: 24px; font-weight:600; color:#fff; letter-spacing:-0.02em;">3 yrs</div>
+        <div style="font-size:12px; color: oklch(0.65 0.01 80); margin-top:4px;">immutable audit log retained per policy</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== WHY =============== -->
+<section class="section" id="why">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-eyebrow reveal">Why OpsSync</div>
+      <h2 class="reveal d1">Built around the way <em>BdREN already works</em>.</h2>
+      <p class="lead reveal d2">No retraining required. Every form mirrors the paper version your team already signs — only faster, signed digitally, and printable to A4 the moment it's approved.</p>
+    </div>
+
+    <div class="features">
+      <div class="feat reveal">
+        <div class="icb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v18l-3-2-3 2-3-2-3 2-2-2V3z"/></svg></div>
+        <h4>Live A4 preview</h4>
+        <p>Every form renders a print-ready document on the right as you type — with signatures, seal, ref number.</p>
+      </div>
+      <div class="feat reveal d1">
+        <div class="icb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1l9 4v6c0 5-4 9-9 11-5-2-9-6-9-11V5l9-4z"/></svg></div>
+        <h4>BdREN SSO</h4>
+        <p>Single sign-on with your existing BdREN directory account. No new passwords. No new accounts.</p>
+      </div>
+      <div class="feat reveal d2">
+        <div class="icb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5l5 14"/><path d="M14 5h4"/><path d="M14 12h3"/><path d="M14 19h4"/></svg></div>
+        <h4>English & বাংলা</h4>
+        <p>Full UI toggle, with amount-in-words rendered in both languages on every claim.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="icb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg></div>
+        <h4>Role-aware permissions</h4>
+        <p>Requester, Supervisor, Line Manager, Admin, AM/DM, Finance, Sys Admin — each sees only their relevant queues.</p>
+      </div>
+      <div class="feat reveal d1">
+        <div class="icb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg></div>
+        <h4>Three-tier dashboards</h4>
+        <p>Personal, Operational, Executive — each role lands on a dashboard tuned to the decisions they need to make.</p>
+      </div>
+      <div class="feat reveal d2">
+        <div class="icb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/><path d="M12 7v5l3 2"/></svg></div>
+        <h4>Live SLAs & escalation</h4>
+        <p>Every stage has a clock. Auto-escalation kicks in at 48h to keep nothing stuck on someone's desk.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== QUOTE =============== -->
+<section class="quote-band">
+  <div class="container">
+    <div class="quote-card reveal">
+      <blockquote>
+        Before OpsSync, a single vehicle requisition could lose two days passing through three desks. Now the same request is approved before lunch — and the trip log writes itself.
+      </blockquote>
+      <div class="quote-author">
+        <div class="av">SR</div>
+        <div>
+          <strong>Shahriar Rahman</strong>
+          <span>Admin Officer · BdREN Operations Division</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== CTA =============== -->
+<section class="cta" id="help">
+  <div class="container cta-inner">
+    <h2 class="reveal">Sign in. Submit a request. Done before your tea cools.</h2>
+    <p class="reveal d1">Use your existing BdREN directory credentials — no new account needed. New to OpsSync? Your role and department are picked up from HR automatically.</p>
+    <div class="reveal d2">
+      <button class="btn primary large" id="cta-bottom">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
+        Sign in with BdREN ID
+      </button>
+      <a class="btn ghost large" href="mailto:opssync@bdren.net.bd">Contact admin</a>
+    </div>
+  </div>
+</section>
+
+<!-- =============== FOOTER =============== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:14px;">
+          <div class="mark">B</div>
+          <div>
+            <div class="name" style="color:#fff;">BdREN OpsSync</div>
+            <div class="sub">Internal Operations Portal</div>
+          </div>
+        </div>
+        <p style="font-size:13px; color: oklch(0.6 0.005 80); line-height:1.55; max-width: 38ch; margin:0;">
+          Bangladesh Research and Education Network · Internal use only. Designed for the Administration Division to digitise five core operational workflows.
+        </p>
+      </div>
+      <div>
+        <h5>Modules</h5>
+        <ul>
+          <li><a href="BdREN OpsSync.html">Meeting Booking</a></li>
+          <li><a href="BdREN OpsSync.html">Food Requisition</a></li>
+          <li><a href="BdREN OpsSync.html">Logistics & Inventory</a></li>
+          <li><a href="BdREN OpsSync.html">Vehicle Requisition</a></li>
+          <li><a href="BdREN OpsSync.html">Conveyance Claims</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Help</h5>
+        <ul>
+          <li><a href="#">User guide</a></li>
+          <li><a href="#">Approver handbook</a></li>
+          <li><a href="#">Policy reference</a></li>
+          <li><a href="#">Release notes</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>BdREN</h5>
+        <ul>
+          <li><a href="https://bdren.net.bd">bdren.net.bd</a></li>
+          <li><a href="mailto:opssync@bdren.net.bd">opssync@bdren.net.bd</a></li>
+          <li><a href="#">+880 2 5550 4101</a></li>
+          <li><a href="#">Plot 5/A · Banani</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Bangladesh Research and Education Network. Internal use only.</span>
+      <span style="font-family: var(--font-mono); letter-spacing:0.08em;">v1.0 · admin.bdren.net.bd</span>
+    </div>
+  </div>
+</footer>
+
+<!-- =============== LOGIN MODAL =============== -->
+<div class="modal-back" id="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button class="modal-close" id="modal-close" aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+    </button>
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+      <div class="logo">
+        <div class="mark" style="width:30px; height:30px;">B</div>
+        <div>
+          <div class="name">BdREN OpsSync</div>
+          <div class="sub">Sign in</div>
+        </div>
+      </div>
+    </div>
+    <h3 id="modal-title">Welcome back.</h3>
+    <p>OpsSync uses your BdREN directory account. There is no separate login — your role and department are inherited from HR.</p>
+
+    <button class="sso-btn" id="sso-go">
+      <span class="sso-mark">B</span>
+      <div style="text-align:left;">
+        <div style="font-size:14px; line-height:1.2;">Continue with BdREN ID</div>
+        <div style="font-size:11px; opacity:0.7; margin-top:2px; font-weight:400;">Single sign-on · @bdren.net.bd</div>
+      </div>
+      <span class="arr">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+      </span>
+    </button>
+
+    <div class="or-row">Authorised users only</div>
+    <div class="small">
+      Lost access to your account? Contact <a href="mailto:it@bdren.net.bd">it@bdren.net.bd</a> or your System Admin.
+    </div>
+
+    <div class="secure-row">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1l9 4v6c0 5-4 9-9 11-5-2-9-6-9-11V5l9-4z"/><path d="M9 12l2 2 4-4"/></svg>
+      <span><strong>Secure session</strong> · TLS 1.3 · IP-logged · Audit-trail enabled</span>
+    </div>
+  </div>
+</div>
+
+<!-- =============== JS =============== -->
+<script>
+(() => {
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add("in");
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+
+  // Counter animation
+  const ioCount = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const target = +el.dataset.count;
+      if (!target) return;
+      const start = performance.now();
+      const dur = 1400;
+      // Preserve any existing suffix wrapping (em)
+      const orig = el.innerHTML;
+      const tick = (t) => {
+        const p = Math.min(1, (t - start) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const v = Math.round(target * eased);
+        // replace leading number while keeping <em> suffix
+        el.innerHTML = orig.replace(/^[0-9,]+/, v.toLocaleString());
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+      ioCount.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll("[data-count]").forEach(el => ioCount.observe(el));
+
+  // Modal
+  const modal = document.getElementById("modal");
+  const open = () => modal.classList.add("open");
+  const close = () => modal.classList.remove("open");
+  document.getElementById("cta-signin").addEventListener("click", open);
+  document.getElementById("cta-hero").addEventListener("click", open);
+  document.getElementById("cta-bottom").addEventListener("click", open);
+  document.getElementById("modal-close").addEventListener("click", close);
+  modal.addEventListener("click", (e) => { if (e.target === modal) close(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+  document.getElementById("sso-go").addEventListener("click", () => {
+    // Mock SSO redirect into the app
+    window.location.href = "BdREN OpsSync.html";
+  });
+})();
+</script>
+</body>
+</html>
