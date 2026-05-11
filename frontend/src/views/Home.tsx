@@ -1,9 +1,10 @@
 'use client'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 import { useAuth } from '@/contexts/AuthContext'
+import { startSocialLogin } from '@/services/auth'
 import './home.css'
 
 // ── Inline SVG helpers ────────────────────────────────────────
@@ -17,17 +18,6 @@ const LoginIcon = () => (
     <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/>
   </svg>
 )
-const CloseIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 6L6 18"/><path d="M6 6l12 12"/>
-  </svg>
-)
-const ShieldIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 1l9 4v6c0 5-4 9-9 11-5-2-9-6-9-11V5l9-4z"/><path d="M9 12l2 2 4-4"/>
-  </svg>
-)
-
 // ── Orbiting card data ────────────────────────────────────────
 // radiusFrac: fraction of orb half-width; speed: degrees/sec (positive = CW)
 const ORBITERS = [
@@ -185,40 +175,43 @@ function StatCounter({ value, suffix = '', display }: { value: number | null; su
 export default function Home() {
   const { isAuthenticated } = useAuth()
   const router = useRouter()
-  const [modalOpen, setModalOpen] = useState(false)
+  const [signingIn, setSigningIn] = useState(false)
+  const [signInError, setSignInError] = useState('')
   const rootRef = useRef<HTMLDivElement>(null)
   const orbRef = useRef<HTMLDivElement>(null)
   const cardRefs = useRef<(HTMLDivElement | null)[]>([])
   const anglesRef = useRef(ORBITERS.map((o) => o.startDeg))
   const rafRef = useRef<number>(0)
 
-  // JS-based orbit animation
-  const animate = useCallback(() => {
-    const orb = orbRef.current
-    if (!orb) { rafRef.current = requestAnimationFrame(animate); return }
-    const size = orb.offsetWidth
-    const cx = size / 2
-    const cy = size / 2
-    const now = performance.now()
-    ORBITERS.forEach((o, i) => {
-      const card = cardRefs.current[i]
-      if (!card) return
-      const elapsed = now / 1000
-      const deg = o.startDeg + o.speed * elapsed
-      anglesRef.current[i] = deg
-      const rad = (deg * Math.PI) / 180
-      const radius = cx * o.radiusFrac
-      const x = cx + Math.sin(rad) * radius
-      const y = cy - Math.cos(rad) * radius
-      card.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`
-    })
-    rafRef.current = requestAnimationFrame(animate)
-  }, [])
-
   useEffect(() => {
+    const animate = () => {
+      const orb = orbRef.current
+      if (!orb) {
+        rafRef.current = requestAnimationFrame(animate)
+        return
+      }
+      const size = orb.offsetWidth
+      const cx = size / 2
+      const cy = size / 2
+      const now = performance.now()
+      ORBITERS.forEach((o, i) => {
+        const card = cardRefs.current[i]
+        if (!card) return
+        const elapsed = now / 1000
+        const deg = o.startDeg + o.speed * elapsed
+        anglesRef.current[i] = deg
+        const rad = (deg * Math.PI) / 180
+        const radius = cx * o.radiusFrac
+        const x = cx + Math.sin(rad) * radius
+        const y = cy - Math.cos(rad) * radius
+        card.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`
+      })
+      rafRef.current = requestAnimationFrame(animate)
+    }
+
     rafRef.current = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(rafRef.current)
-  }, [animate])
+  }, [])
 
   useEffect(() => {
     const root = rootRef.current
@@ -235,14 +228,30 @@ export default function Home() {
     return () => io.disconnect()
   }, [])
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setModalOpen(false) }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [])
+  const handleSignIn = async () => {
+    if (isAuthenticated) {
+      router.push('/dashboard')
+      return
+    }
 
-  const handleSignIn = () => {
-    if (isAuthenticated) { router.push('/dashboard') } else { setModalOpen(true) }
+    setSigningIn(true)
+    setSignInError('')
+    try {
+      const response = await startSocialLogin('bdren', { next: '/dashboard' })
+      const authorizationUrl = (response as { authorization_url?: string }).authorization_url
+      if (!authorizationUrl) {
+        throw new Error('BdREN authorization URL missing from the server response.')
+      }
+      window.location.assign(authorizationUrl)
+    } catch (error: unknown) {
+      const detail =
+        (error as { response?: { data?: { detail?: string } }; message?: string })
+          ?.response?.data?.detail ||
+        (error as { message?: string })?.message ||
+        'BdREN sign-in could not be started right now.'
+      setSignInError(detail)
+      setSigningIn(false)
+    }
   }
 
   return (
@@ -262,8 +271,8 @@ export default function Home() {
             <a className="hp-nav-link" href="#help">Help</a>
           </nav>
           <div className="hp-nav-cta">
-            <button className="hp-btn primary" onClick={handleSignIn}>
-              Sign in with BdREN ID <ArrowRight />
+            <button className="hp-btn primary" onClick={handleSignIn} disabled={signingIn}>
+              {signingIn ? 'Connecting...' : 'Sign in with BdREN ID'} <ArrowRight />
             </button>
           </div>
         </div>
@@ -287,14 +296,17 @@ export default function Home() {
                 BdREN OpsSync digitises every administrative workflow at the Bangladesh Research and Education Network — meeting bookings, food, logistics, vehicles, and conveyance claims — into a single, role-aware portal. Submit a request in under three minutes. Watch every approval step in real time.
               </p>
               <div className="hp-hero-actions hp-reveal d3">
-                <button className="hp-btn primary large" onClick={handleSignIn}>
+                <button className="hp-btn primary large" onClick={handleSignIn} disabled={signingIn}>
                   <LoginIcon />
-                  {isAuthenticated ? 'Open workspace' : 'Sign in with BdREN ID'}
+                  {isAuthenticated ? 'Open workspace' : signingIn ? 'Connecting to BdREN...' : 'Sign in with BdREN ID'}
                 </button>
                 <a className="hp-btn ghost large" href="#workflow">
                   See how it works <ArrowRight />
                 </a>
               </div>
+              {signInError ? (
+                <p className="hp-signin-error" role="alert">{signInError}</p>
+              ) : null}
             </div>
 
             {/* ORB */}
@@ -372,7 +384,7 @@ export default function Home() {
               <Link
                 key={mod.code}
                 href={isAuthenticated ? mod.href : '#'}
-                onClick={!isAuthenticated ? (e) => { e.preventDefault(); setModalOpen(true) } : undefined}
+                onClick={!isAuthenticated ? (e) => { e.preventDefault(); handleSignIn() } : undefined}
                 className={`hp-mod${mod.featured ? ' featured' : ''} hp-reveal${i > 0 ? ` d${Math.min(i, 4)}` : ''}`}
               >
                 <span className="hp-mod-code">{mod.code}</span>
@@ -479,9 +491,9 @@ export default function Home() {
           <h2 className="hp-reveal">Sign in. Submit a request. Done before your tea cools.</h2>
           <p className="hp-reveal d1">Use your existing BdREN directory credentials — no new account needed. Your role and department are picked up from HR automatically.</p>
           <div className="hp-reveal d2">
-            <button className="hp-btn primary large" onClick={handleSignIn}>
+            <button className="hp-btn primary large" onClick={handleSignIn} disabled={signingIn}>
               <LoginIcon />
-              {isAuthenticated ? 'Open workspace' : 'Sign in with BdREN ID'}
+              {isAuthenticated ? 'Open workspace' : signingIn ? 'Connecting to BdREN...' : 'Sign in with BdREN ID'}
             </button>
             <a className="hp-btn ghost large" href="mailto:opssync@bdren.net.bd" style={{ marginLeft: 12 }}>
               Contact admin
@@ -535,41 +547,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-
-      {/* LOGIN MODAL */}
-      <div
-        className={`hp-modal-back${modalOpen ? ' open' : ''}`}
-        onClick={(e) => { if (e.target === e.currentTarget) setModalOpen(false) }}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Sign in to BdREN OpsSync"
-      >
-        <div className="hp-modal">
-          <button className="hp-modal-close" onClick={() => setModalOpen(false)} aria-label="Close"><CloseIcon /></button>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
-            <img src="/branding/opssynclogo.png" className="hp-logo-img" alt="OpsSync" />
-            <div className="hp-logo-name">BdREN OpsSync</div>
-          </div>
-          <h3>Welcome back.</h3>
-          <p>OpsSync uses your BdREN directory account. There is no separate login — your role and department are inherited from HR.</p>
-          <Link href="/login" className="hp-sso-btn" onClick={() => setModalOpen(false)}>
-            <img src="/branding/opssynclogo.png" className="hp-logo-img" alt="" style={{ width: 30, height: 30, borderRadius: 8 }} />
-            <div className="hp-sso-lbl">
-              <div className="hp-sso-lbl-main">Continue with BdREN ID</div>
-              <div className="hp-sso-lbl-sub">Single sign-on · @bdren.net.bd</div>
-            </div>
-            <span className="hp-sso-arr"><ArrowRight /></span>
-          </Link>
-          <div className="hp-or-row">Authorised users only</div>
-          <div className="hp-modal-small">
-            Lost access? Contact <a href="mailto:it@bdren.net.bd">it@bdren.net.bd</a> or your System Admin.
-          </div>
-          <div className="hp-secure-row">
-            <ShieldIcon />
-            <span><strong>Secure session</strong> · TLS 1.3 · IP-logged · Audit-trail enabled</span>
-          </div>
-        </div>
-      </div>
 
     </div>
   )
